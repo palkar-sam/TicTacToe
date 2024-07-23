@@ -727,7 +727,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backButton: {fileID: 1814141915}
   roomNameText: {fileID: 535387667}
-  leaveRomButton: {fileID: 0}
+  leaveRoomButton: {fileID: 92678887}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,16 +8,16 @@ using UnityEngine.UI;
 public class GamePlayController : PhotonBaseView
 {
     [SerializeField] private TextMeshProUGUI roomNameText;
-    [SerializeField] private Button leaveRomButton;
+    [SerializeField] private Button leaveRoomButton;
 
     public override void OnInitialize()
     {
         base.OnInitialize();
-        leaveRomButton.gameObject.SetActive(GameManager.Instance.IsMultiplayer);
+        leaveRoomButton.gameObject.SetActive(GameManager.Instance.IsMultiplayer);
 
         if (GameManager.Instance.IsMultiplayer)
         {
-            leaveRomButton.onClick.AddListener(OnLeaveRoom);
+            leaveRoomButton.onClick.AddListener(OnLeaveRoom);
             roomNameText.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
         }
         else
