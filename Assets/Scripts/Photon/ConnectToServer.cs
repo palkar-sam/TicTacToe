@@ -1,15 +1,19 @@
 using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Views;
 
 public class ConnectToServer : PhotonBaseView
 {
-    private void Start()
+    [SerializeField] private TextMeshProUGUI status;
+
+
+    public override void OnInitialize()
     {
+        base.OnInitialize();
         PhotonNetwork.ConnectUsingSettings();
+        status.text = "Loading ***";
     }
 
     public override void OnConnectedToMaster()

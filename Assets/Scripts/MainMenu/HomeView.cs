@@ -2,22 +2,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Views;
 
 public class HomeView : BaseView
 {
-    [SerializeField] private Button createButton;
-    [SerializeField] private Button joinButton;
+    [SerializeField] private GameObject buttonsContainer;
+    [SerializeField] private Button singlePlayerButton;
+    [SerializeField] private Button mulitiPlayerButton;
+    [SerializeField] private GameObject singlePlayerPanel;
+    [SerializeField] private GameObject mulitiPlayerPanel;
 
     public event Action OnCreate;
     public event Action OnOpenJoinDialog;
-    
 
-    private void Start()
+    public override void OnInitialize()
     {
-        //createButton.onClick.AddListener(ShowCreateDialog);
-        //joinButton.onClick.AddListener(ShowJoinDialog);
+        base.OnInitialize();
+        singlePlayerButton.onClick.AddListener(() => { ShowModePanel(0); });
+        mulitiPlayerButton.onClick.AddListener(() => { ShowModePanel(1); });
     }
 
     public void ShowCreateDialog()
@@ -28,5 +32,19 @@ public class HomeView : BaseView
     public void ShowJoinDialog()
     {
         OnOpenJoinDialog?.Invoke();
+    }
+
+    public void PlaySinglePlayerRound()
+    {
+        SceneManager.LoadSceneAsync(2);
+    }
+
+    private void ShowModePanel(int mode)
+    {
+        buttonsContainer.SetActive(false);
+        singlePlayerPanel.SetActive(mode == 0);
+        mulitiPlayerPanel.SetActive(mode == 1);
+
+        GameManager.Instance.IsMultiplayer = mode == 1;
     }
 }

@@ -7,6 +7,10 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     private static readonly object lockObj = new object();
 
+    public static GameManager Instance => _instance;
+
+    public bool IsMultiplayer { get; set; }
+
     private void Awake()
     {
         Application.targetFrameRate = Screen.currentResolution.refreshRate;

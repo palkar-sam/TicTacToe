@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,22 +9,35 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image imageObj;
 
+    public event Action<int, int> OnCellSelected;
+
+    public bool IsSelected { get; private set; }
+
+    public int ID => _id;
+    
+    
+    private int _id;
+    private int _rowId;
+
     public void OnPointerClick(PointerEventData eventData)
     {
         Debug.Log(name + " Game Object Clicked!");
-        ColorUtility.TryParseHtmlString("#" + Board.SelectedCode, out Color parsedColor);
-        imageObj.color = parsedColor;
+        if (!IsSelected)
+        {
+            ColorUtility.TryParseHtmlString("#" + Board.SelectedCode, out Color parsedColor);
+            imageObj.color = parsedColor;
+            IsSelected = true;
+            OnCellSelected?.Invoke(_rowId, _id);
+        }
+        else
+        {
+            Debug.Log("Item Already Selected.....");
+        }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void SetData(int rowIndex, int index)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        _rowId = rowIndex;
+        _id = index;
     }
 }
