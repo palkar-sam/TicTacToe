@@ -2126,7 +2126,6 @@ GameObject:
   - component: {fileID: 830628390}
   - component: {fileID: 830628393}
   - component: {fileID: 830628392}
-  - component: {fileID: 830628391}
   m_Layer: 5
   m_Name: bg
   m_TagString: Untagged
@@ -2154,23 +2153,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &830628391
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 830628389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 492647c73b8d64143a1ddd32e40f015f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonsContainer: {fileID: 0}
-  singlePlayerButton: {fileID: 0}
-  mulitiPlayerButton: {fileID: 0}
-  singlePlayerPanel: {fileID: 0}
-  mulitiPlayerPanel: {fileID: 0}
 --- !u!114 &830628392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4080,7 +4062,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1016290766}
         m_TargetAssemblyTypeName: HomeView, Assembly-CSharp
-        m_MethodName: ShowCreateDialog
+        m_MethodName: PlaySinglePlayerRound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

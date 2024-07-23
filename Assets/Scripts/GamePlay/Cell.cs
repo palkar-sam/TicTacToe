@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Cell : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image imageObj;
+    [SerializeField] private Text label;
 
     public event Action<int, int> OnCellSelected;
 
@@ -39,5 +40,11 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     {
         _rowId = rowIndex;
         _id = index;
+        label.text = $"({_rowId},{_id})";
+    }
+
+    public void UpdateLabel(int selectedVal)
+    {
+        label.text = $"({_rowId},{_id},{selectedVal})"; 
     }
 }

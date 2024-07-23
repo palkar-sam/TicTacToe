@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => _instance;
 
     public bool IsMultiplayer { get; set; }
+    public string UserName { get; set; } = "Dummy";
 
     private void Awake()
     {

@@ -14,7 +14,7 @@ public class MainMenuView : BaseView
     {
         createView.SetVisibility(false);
         joinView.SetVisibility(false);
-        homeView.SetVisibility(true);
+        //homeView.SetVisibility(true);
 
         homeView.OnCreate += OnShowCreateDialog;
         homeView.OnOpenJoinDialog += OnOpenJoinDialog;

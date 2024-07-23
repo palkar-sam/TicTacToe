@@ -1,11 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace Views
 { 
     public class BaseView : MonoBehaviour, IView
     {
+        [SerializeField] private Button backButton;
+
+        protected virtual void OnBackClick()
+        {
+
+        }
+
         public virtual void OnInitialize()
         {
+            if(backButton != null)
+                backButton.onClick.AddListener(OnBackClick);
         }
 
         public virtual void OnShow()

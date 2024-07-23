@@ -1,14 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Views;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GamePlayController : PhotonBaseView
 {
     [SerializeField] private TextMeshProUGUI roomNameText;
+    [SerializeField] private Button leaveRomButton;
+
+    public override void OnInitialize()
+    {
+        base.OnInitialize();
+        leaveRomButton.gameObject.SetActive(GameManager.Instance.IsMultiplayer);
+
+        if (GameManager.Instance.IsMultiplayer)
+        {
+            leaveRomButton.onClick.AddListener(OnLeaveRoom);
+            roomNameText.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
+        }
+        else
+        {
+            roomNameText.text = "Room : " + GameManager.Instance.UserName;
+        }
+    }
 
     public override void OnConnectedToMaster()
     {
@@ -23,15 +39,14 @@ public class GamePlayController : PhotonBaseView
         SceneManager.LoadSceneAsync(1);
     }
 
+    protected override void OnBackClick()
+    {
+        base.OnBackClick();
+        SceneManager.LoadSceneAsync(1);
+    }
+
     public void OnLeaveRoom()
     {
         PhotonNetwork.LeaveRoom();
     }
-
-    private void Start()
-    {
-        roomNameText.text = "Room : "+PhotonNetwork.CurrentRoom.Name;
-    }
-
-
 }

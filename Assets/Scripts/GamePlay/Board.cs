@@ -12,7 +12,6 @@ public class Board : MonoBehaviour
     [SerializeField] private int rowLength;
     [SerializeField] private int colLength;
     [SerializeField] private List<Row> rows;
-    [SerializeField] private BoardPlayers player;
 
     //private bool IsBoardComplete => _cells.FindAll(item => item > -1).Count > 0;
 
@@ -53,13 +52,15 @@ public class Board : MonoBehaviour
 
     private void OnCellSelected(int rowIndex, int index)
     {
-        _cells[rowIndex][index] = player == BoardPlayers.PLAYER_X ? 1 : 0;
+        _cells[rowIndex][index] = _currentPlayer == BoardPlayers.PLAYER_X ? 1 : 0;
         matchCells.Clear();
 
         matchCells.Add(rows[rowIndex].Cells[index]);
+        matchCells[0].UpdateLabel(_cells[rowIndex][index]);
         bool matchFound = false;
         //check for Horizontal right - 
-        for(int i = index + 1; i < _cells[rowIndex].Count; i++)
+        Debug.Log("Checking Horizontal : Right : Count : "+ matchCells.Count+" : RowIndex : "+rowIndex+" : Index : "+index);
+        for (int i = index + 1; i < _cells[rowIndex].Count; i++)
         {
             if (!matchFound && _cells[rowIndex][index] == _cells[rowIndex][i])
             {
@@ -73,7 +74,8 @@ public class Board : MonoBehaviour
         }
 
         //check for Horizontal left - 
-        for (int i = index - 1; i > 0; i--)
+        Debug.Log("Checking Horizontal : Left : Count : " + matchCells.Count);
+        for (int i = index - 1; i >= 0; i--)
         {
             if (!matchFound && _cells[rowIndex][index] == _cells[rowIndex][i])
             {
@@ -87,7 +89,8 @@ public class Board : MonoBehaviour
         }
 
         //check for Vetical Up - 
-        for (int i = rowIndex - 1; i > 0; i--)
+        Debug.Log("Checking Vertical : Up : Count : " + matchCells.Count);
+        for (int i = rowIndex - 1; i >= 0; i--)
         {
             if (!matchFound && _cells[rowIndex][index] == _cells[i][index])
             {
@@ -101,7 +104,8 @@ public class Board : MonoBehaviour
         }
 
         //check for Vetical Down - 
-        for (int i = index + 1; i < _cells.Count; i++)
+        Debug.Log("Checking Vertical : Down : Count : " + matchCells.Count);
+        for (int i = rowIndex + 1; i < _cells.Count; i++)
         {
             if (!matchFound && _cells[rowIndex][index] == _cells[i][index])
             {
@@ -112,6 +116,78 @@ public class Board : MonoBehaviour
             }
             else
                 break;
+        }
+
+        //Check For Digonally Down - Right
+        Debug.Log("Checking Daigonally Down : Right : Count : " + matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+        for (int i = index + 1, j = rowIndex + 1; i < _cells[rowIndex].Count; i++, j++)
+        {
+            if(j < _cells.Count)
+            {
+                if (!matchFound && _cells[rowIndex][index] == _cells[j][i])
+                {
+
+                    matchCells.Add(rows[j].Cells[i]);
+                    if (matchCells.Count >= 3)
+                        matchFound = true;
+                }
+                else
+                    break;
+            }
+        }
+
+        //Check For Digonally Down - Left
+        Debug.Log("Checking Daigonally Down : Left : Count : " + matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+        for (int i = index - 1, j = rowIndex + 1; i >= 0; i--, j++)
+        {
+            if (j < _cells.Count)
+            {
+                if (!matchFound && _cells[rowIndex][index] == _cells[j][i])
+                {
+
+                    matchCells.Add(rows[j].Cells[i]);
+                    if (matchCells.Count >= 3)
+                        matchFound = true;
+                }
+                else
+                    break;
+            }
+        }
+
+        //Check For Digonally Up - Right
+        Debug.Log("Checking Daigonally Up : Right : Count : " + matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+        for (int i = index + 1, j = rowIndex - 1; i < _cells[rowIndex].Count; i++, j--)
+        {
+            if (j >= 0)
+            {
+                if (!matchFound && _cells[rowIndex][index] == _cells[j][i])
+                {
+
+                    matchCells.Add(rows[j].Cells[i]);
+                    if (matchCells.Count >= 3)
+                        matchFound = true;
+                }
+                else
+                    break;
+            }
+        }
+
+        //Check For Digonally Up - Left
+        Debug.Log("Checking Daigonally Up : Left : Count : " + matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+        for (int i = index - 1, j = rowIndex - 1; i >=0 ; i--, j--)
+        {
+            if (j >= 0)
+            {
+                if (!matchFound && _cells[rowIndex][index] == _cells[j][i])
+                {
+
+                    matchCells.Add(rows[j].Cells[i]);
+                    if (matchCells.Count >= 3)
+                        matchFound = true;
+                }
+                else
+                    break;
+            }
         }
 
         Debug.Log("Match Found : " + string.Join(",",matchCells));
@@ -125,6 +201,7 @@ public class Board : MonoBehaviour
             Debug.Log("Changing Player ---- ");
             matchCells.Clear();
             _currentPlayer = _currentPlayer == BoardPlayers.PLAYER_X ? BoardPlayers.PLAYER_O : BoardPlayers.PLAYER_X;
+            Debug.Log("Next Player : " + _currentPlayer);
             UpdateRoundText(); 
         }
     }
