@@ -1,9 +1,11 @@
+using Board;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Utils;
 
 public class Cell : MonoBehaviour, IPointerClickHandler
 {
@@ -22,17 +24,17 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log(name + " Game Object Clicked!");
+        LoggerUtil.Log(name + " Game Object Clicked!");
         if (!IsSelected)
         {
-            ColorUtility.TryParseHtmlString("#" + Board.SelectedCode, out Color parsedColor);
+            ColorUtility.TryParseHtmlString("#" + CardBoard.SelectedCode, out Color parsedColor);
             imageObj.color = parsedColor;
             IsSelected = true;
             OnCellSelected?.Invoke(_rowId, _id);
         }
         else
         {
-            Debug.Log("Item Already Selected.....");
+            LoggerUtil.Log("Item Already Selected.....");
         }
     }
 

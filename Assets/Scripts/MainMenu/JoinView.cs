@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Utils;
 using Views;
 
 public class JoinView : PhotonBaseView
@@ -38,20 +39,20 @@ public class JoinView : PhotonBaseView
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-        Debug.Log("JoinView : OnJoinedRoom");
+        LoggerUtil.Log("JoinView : OnJoinedRoom");
         PhotonNetwork.LoadLevel(2);
     }
 
     public override void OnJoinedLobby()
     {
         base.OnJoinedLobby();
-        Debug.Log("JoinView : OnJoinedLobby");
+        LoggerUtil.Log("JoinView : OnJoinedLobby");
     }
 
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
-        Debug.Log("JoinView : OnConnectedToMaster");
+        LoggerUtil.Log("JoinView : OnConnectedToMaster");
         PhotonNetwork.JoinLobby();
     }
 

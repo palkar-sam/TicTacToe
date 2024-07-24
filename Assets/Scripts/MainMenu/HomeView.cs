@@ -45,6 +45,11 @@ public class HomeView : BaseView
         singlePlayerPanel.SetActive(mode == 0);
         mulitiPlayerPanel.SetActive(mode == 1);
 
-        GameManager.Instance.IsMultiplayer = mode == 1;
+        if(mode == 1)
+        {
+            GameManager.Instance.IsMultiplayer = true;
+            mulitiPlayerPanel.SetActive(true);
+            NetworkManager.Instance.ConnectToServer();
+        }
     }
 }

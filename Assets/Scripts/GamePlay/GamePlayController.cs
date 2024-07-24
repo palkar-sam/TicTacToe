@@ -4,11 +4,13 @@ using Views;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Utils;
 
 public class GamePlayController : PhotonBaseView
 {
     [SerializeField] private TextMeshProUGUI roomNameText;
     [SerializeField] private Button leaveRoomButton;
+    [SerializeField] private SummaryView summaryView;
 
     public override void OnInitialize()
     {
@@ -24,17 +26,19 @@ public class GamePlayController : PhotonBaseView
         {
             roomNameText.text = "Room : " + GameManager.Instance.UserName;
         }
+
+        RegoisterEvents();
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("GamePlayController : Photon Connected to master ............");
+        LoggerUtil.Log("GamePlayController : Photon Connected to master ............");
         base.OnConnectedToMaster();
     }
 
     public override void OnLeftRoom()
     {
-        Debug.Log("GamePlayController : OnLeftRoom ............");
+        LoggerUtil.Log("GamePlayController : OnLeftRoom ............");
         base.OnLeftRoom();
         SceneManager.LoadSceneAsync(1);
     }
@@ -48,5 +52,15 @@ public class GamePlayController : PhotonBaseView
     public void OnLeaveRoom()
     {
         PhotonNetwork.LeaveRoom();
+    }
+
+    private void RegoisterEvents()
+    {
+        EventManager.StartListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
+    }
+
+    private void OnRoundComplete()
+    {
+        summaryView.SetVisibility(true);
     }
 }

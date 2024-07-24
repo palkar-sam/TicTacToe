@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 using Photon.Realtime;
 using Views;
 using System;
+using Utils;
 
 public class RoomListPanel : BaseView
 {
@@ -17,7 +16,7 @@ public class RoomListPanel : BaseView
 
     public void UpdateRoomList(List<RoomInfo> roomList)
     {
-        Debug.Log("RoomListPanel : Room Lists : " + string.Join(",",roomList));
+        LoggerUtil.Log("RoomListPanel : Room Lists : " + string.Join(",",roomList));
 
         foreach(RoomItem item in roomItemLists)
         {

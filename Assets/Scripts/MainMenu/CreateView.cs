@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Utils;
 using Views;
 
 public class CreateView : PhotonBaseView
@@ -19,7 +20,7 @@ public class CreateView : PhotonBaseView
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("On JoinRoom ---- ");
+        LoggerUtil.Log("On JoinRoom ---- ");
         base.OnJoinedRoom();
         PhotonNetwork.LoadLevel(2);
     }

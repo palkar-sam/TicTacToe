@@ -1,6 +1,5 @@
+using Board;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -20,7 +19,7 @@ namespace Palettes
         public void OnPointerClick(PointerEventData eventData)
         {
             transform.localScale = new Vector2(1.2f, 1.2f);
-            Board.SelectedCode = GetPaletteColor();
+            CardBoard.SelectedCode = GetPaletteColor();
             OnSelect?.Invoke(this);
         }
 

@@ -9,7 +9,7 @@ namespace Views
 
         protected virtual void OnBackClick()
         {
-
+            SetVisibility(false);
         }
 
         public virtual void OnInitialize()
