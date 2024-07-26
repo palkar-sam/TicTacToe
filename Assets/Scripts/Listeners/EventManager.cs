@@ -1,4 +1,5 @@
-﻿using Props;
+﻿using Model;
+using Props;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,120 +7,120 @@ using Utils;
 
 public class EventManager
 {
+    private static Dictionary<string, Action> eventDictionary = new Dictionary<string, Action>();
 
-  private static Dictionary<string, Action> eventDictionary = new Dictionary<string, Action>();
-  private static Dictionary<string, Action<object>> parameterizedEventDictionary = new Dictionary<string, Action<object>>();
-
-
-  public static void StartListening(GameEvents gameEvent, Action listener)
-  {
-    Action thisEvent;
-    string eventString = gameEvent.ToString();
-    if (eventDictionary.TryGetValue(eventString, out thisEvent))
+    public static void StartListening(GameEvents gameEvent, Action listener)
     {
-      //Add more event to the existing one
-      thisEvent += listener;
+        Action thisEvent;
+        string eventString = gameEvent.ToString();
+        if (eventDictionary.TryGetValue(eventString, out thisEvent))
+        {
+            //Add more event to the existing one
+            thisEvent += listener;
 
-      //Update the Dictionary
-      eventDictionary[eventString] = thisEvent;
+            //Update the Dictionary
+            eventDictionary[eventString] = thisEvent;
+        }
+        else
+        {
+            //Add event to the Dictionary for the first time
+            thisEvent += listener;
+            eventDictionary.Add(eventString, thisEvent);
+        }
     }
-    else
+
+    public static void StopListening(GameEvents gameEvent, Action listener)
     {
-      //Add event to the Dictionary for the first time
-      thisEvent += listener;
-      eventDictionary.Add(eventString, thisEvent);
-    }
-  }
 
-  internal static void TriggerEvent(object oN_DEEP_LINK_INVITE_RECIEVED)
-  {
+        Action thisEvent;
+        string eventString = gameEvent.ToString();
+        if (eventDictionary.TryGetValue(eventString, out thisEvent))
+        {
+            //Remove event from the existing one
+            thisEvent -= listener;
+
+            //Update the Dictionary
+            eventDictionary[eventString] = thisEvent;
+        }
+    }
+
+    public static void TriggerEvent(GameEvents eventName)
+    {
+        Action thisEvent = null;
+        if (eventDictionary.TryGetValue(eventName.ToString(), out thisEvent))
+        {
+            if (thisEvent != null)
+            {
+                thisEvent.Invoke();
+            }
+            if (LoggerUtil.logEnabled) LoggerUtil.Log("Triggered event " + eventName.ToString());
+            // OR USE instance.eventDictionary[eventName]();
+        }
+        else
+        {
+            Debug.LogWarning("Event " + eventName + " has no listeners, but is being triggered.");
+        }
+    }
+}
+
+public class EventManager<T> : EventManager where T : BaseModel
+{
+    private static Dictionary<string, Action<T>> parameterizedEventDictionary = new Dictionary<string, Action<T>>();
+
+    internal static void TriggerEvent(object oN_DEEP_LINK_INVITE_RECIEVED)
+    {
     throw new NotImplementedException();
-  }
+    }
 
-  public static void StartListening(GameEvents gameEvent, Action<object> listener)
-  {
-    Action<object> thisEvent;
+    public static void StartListening(GameEvents gameEvent, Action<T> listener)
+    {
+    Action<T> thisEvent;
     string eventString = gameEvent.ToString();
     if (parameterizedEventDictionary.TryGetValue(eventString, out thisEvent))
     {
-      //Add more event to the existing one
-      thisEvent += listener;
+        //Add more event to the existing one
+        thisEvent += listener;
 
-      //Update the Dictionary
-      parameterizedEventDictionary[eventString] = thisEvent;
+        //Update the Dictionary
+        parameterizedEventDictionary[eventString] = thisEvent;
     }
     else
     {
-      //Add event to the Dictionary for the first time
-      thisEvent += listener;
-      parameterizedEventDictionary.Add(eventString, thisEvent);
+        //Add event to the Dictionary for the first time
+        thisEvent += listener;
+        parameterizedEventDictionary.Add(eventString, thisEvent);
     }
-  }
+    }
 
-  public static void StopListening(GameEvents gameEvent, Action listener)
-  {
-
-    Action thisEvent;
-    string eventString = gameEvent.ToString();
-    if (eventDictionary.TryGetValue(eventString, out thisEvent))
+    public static void StopListening(GameEvents gameEvent, Action<T> listener)
     {
-      //Remove event from the existing one
-      thisEvent -= listener;
 
-      //Update the Dictionary
-      eventDictionary[eventString] = thisEvent;
-    }
-  }
-
-  public static void StopListening(GameEvents gameEvent, Action<object> listener)
-  {
-
-    Action<object> thisEvent;
+    Action<T> thisEvent;
     string eventString = gameEvent.ToString();
     if (parameterizedEventDictionary.TryGetValue(eventString, out thisEvent))
     {
-      //Remove event from the existing one
-      thisEvent -= listener;
+        //Remove event from the existing one
+        thisEvent -= listener;
 
-      //Update the Dictionary
-      parameterizedEventDictionary[eventString] = thisEvent;
+        //Update the Dictionary
+        parameterizedEventDictionary[eventString] = thisEvent;
     }
-  }
+    }
 
-
-
-  public static void TriggerEvent(GameEvents eventName)
-  {
-    Action thisEvent = null;
-    if (eventDictionary.TryGetValue(eventName.ToString(), out thisEvent))
+    public static void TriggerEvent(GameEvents eventName, T arguments)
     {
-      if (thisEvent != null)
-      {
-        thisEvent.Invoke();
-      }
-      if (LoggerUtil.logEnabled) LoggerUtil.Log("Triggered event " + eventName.ToString());
-      // OR USE instance.eventDictionary[eventName]();
-    }
-    else
-    {
-      Debug.LogWarning("Event " + eventName + " has no listeners, but is being triggered.");
-    }
-  }
-
-  public static void TriggerEvent(GameEvents eventName, object arguments)
-  {
-    Action<object> thisEvent = null;
+    Action<T> thisEvent = null;
     if (parameterizedEventDictionary.TryGetValue(eventName.ToString(), out thisEvent))
     {
-      if (thisEvent != null)
-      {
+        if (thisEvent != null)
+        {
         thisEvent.Invoke(arguments);
-      }
-      if (LoggerUtil.logEnabled) LoggerUtil.Log("Triggered event " + eventName.ToString());
+        }
+        if (LoggerUtil.logEnabled) LoggerUtil.Log("Triggered event " + eventName.ToString());
     }
     else
     {
-      //Debug.LogWarning("Event " + eventName + " has no listeners, but is being triggered.");
+        //Debug.LogWarning("Event " + eventName + " has no listeners, but is being triggered.");
     }
-  }
+    }
 }

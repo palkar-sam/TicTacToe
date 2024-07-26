@@ -1,5 +1,5 @@
 using GamePlay;
-using System;
+using Model;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -19,26 +19,33 @@ namespace Board
 
         //private bool IsBoardComplete => _cells.FindAll(item => item > -1).Count > 0;
 
-        private List<List<int>> _cells;
-        private List<Cell> matchCells = new List<Cell>();
+        private List<List<int>> _cells; // This stores status of board. 0 - Ai, 1 - user, -1 - Not selected
+        private List<int> _cellIndexes; // This stores all cells indexs - 0,1,2,3,4,5,6,7,8,9
+        private List<Cell> _userDaubedCells = new List<Cell>();
         private BoardPlayers _currentPlayer;
+        private BaordValidator baordValidator;
 
         private void Start()
         {
             _cells = new List<List<int>>();
-
+            _cellIndexes = new List<int>();
+            int index = 0;
             for (int i = 0; i < rows.Count; i++)
             {
                 List<int> tempList = new List<int>();
                 for (int j = 0; j < rows[i].TotalCells; j++)
                 {
                     rows[i].Cells[j].OnCellSelected += OnCellSelected;
-                    rows[i].Cells[j].SetData(i, j);
+                    rows[i].Cells[j].SetData(index, i, j);
                     tempList.Add(-1);
+                    _cellIndexes.Add(index++);
+
                 }
                 _cells.Add(tempList);
             }
 
+            baordValidator = new BaordValidator(_cells, rows);
+            baordValidator.OnBoardValidate += OnBoardValidate;
             _currentPlayer = BoardPlayers.PLAYER_X;
             StartCoroutine(StartRound());
         }
@@ -57,29 +64,82 @@ namespace Board
         private void OnCellSelected(int rowIndex, int index)
         {
             _cells[rowIndex][index] = _currentPlayer == BoardPlayers.PLAYER_X ? 1 : 0;
-            matchCells.Clear();
 
-            matchCells.Add(rows[rowIndex].Cells[index]);
-            matchCells[0].UpdateLabel(_cells[rowIndex][index]);
+            Cell selectedCell = rows[rowIndex].Cells[index];
+            selectedCell.UpdateLabel(_cells[rowIndex][index]);
+            _cellIndexes.Remove(selectedCell.Id);
 
-            BaordValidator bv = new BaordValidator(_cells, rows);
-            matchCells.AddRange(bv.ValidateBoard(rowIndex, index, out bool matchFound));
+            if (_currentPlayer == BoardPlayers.PLAYER_X)
+            {
+                _userDaubedCells.Add(rows[rowIndex].Cells[index]);
+            }
 
-            LoggerUtil.Log($"Match Found : {matchFound} : " + string.Join(",", matchCells));
+            baordValidator.ValidateBoard(rowIndex, index);
+        }
 
-            if (matchFound)
+        private void OnBoardValidate(BoardValidType type)
+        {
+            if (type == BoardValidType.WIN)
             {
                 LoggerUtil.Log("WIN : " + _currentPlayer);
+                EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN });
                 EventManager.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE);
             }
             else
             {
                 LoggerUtil.Log("Changing Player ---- ");
-                matchCells.Clear();
-                _currentPlayer = _currentPlayer == BoardPlayers.PLAYER_X ? BoardPlayers.PLAYER_O : BoardPlayers.PLAYER_X;
+
+                if (_currentPlayer == BoardPlayers.PLAYER_X)
+                {
+                    _currentPlayer = BoardPlayers.PLAYER_O;
+                    SelectedCode = GameManager.Instance.AiColorCode;
+                }
+                else
+                {
+                    _currentPlayer = BoardPlayers.PLAYER_X;
+                    SelectedCode = GameManager.Instance.UserColorCode;
+                }
+                //_currentPlayer = _currentPlayer == BoardPlayers.PLAYER_X ? BoardPlayers.PLAYER_O : BoardPlayers.PLAYER_X;
                 LoggerUtil.Log("Next Player : " + _currentPlayer);
                 UpdateRoundText();
+                if (_currentPlayer == BoardPlayers.PLAYER_O)
+                    StartCoroutine(PlayAiMove());
+
             }
+        }
+
+        private IEnumerator PlayAiMove()
+        {
+            yield return new WaitForSeconds(0.5f);
+            int cellId = GetAiMove();
+            LoggerUtil.Log($"Ai : New cellId : ({cellId}");
+            Cell aiCell = null;
+            int index = -1;
+            int rowIndex = 0;
+            for (int i = 0; i<rows.Count;i++)
+            {
+                aiCell = rows[i].Cells.Find(item => item.Id == cellId);
+                if (aiCell != null)
+                {
+                    index = i;
+                    rowIndex = aiCell.Index;
+                    break;
+                }
+            }
+
+            LoggerUtil.Log($"Ai : Location : ({index} , {rowIndex})");
+            LoggerUtil.Log($"Remaining cell Positions : ({string.Join(",", _cellIndexes)})");
+            aiCell.UpdateCell();
+        }
+
+        private int GetAiMove()
+        {
+            //if(_userDaubedCells.Count == 1)
+            {
+                LoggerUtil.Log($"Ai : _cellIndexes.Count : ({_cellIndexes.Count})");
+                return _cellIndexes[Random.Range(0, _cellIndexes.Count - 1)];
+            }
+            //return 0;
         }
     }
 }

@@ -1,3 +1,5 @@
+using Board;
+using Palettes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,6 +38,12 @@ public class HomeView : BaseView
 
     public void PlaySinglePlayerRound()
     {
+        if (string.IsNullOrEmpty(CardBoard.SelectedCode))
+        {
+            GameManager.Instance.UserColorCode = CardBoard.SelectedCode = PaletteView.DefaultColor;
+        }
+
+        GameManager.Instance.AiColorCode = PaletteView.GetAiColorCode(GameManager.Instance.UserColorCode);
         SceneManager.LoadSceneAsync(2);
     }
 

@@ -32,7 +32,10 @@ namespace Palettes
     public enum PaletteType
     {
         RED,
-        YELLOW
+        YELLOW,
+        BLUE,
+        GREEN,
+        CYAN
     }
 
     [Serializable]

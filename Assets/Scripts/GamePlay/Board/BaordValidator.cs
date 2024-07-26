@@ -1,5 +1,4 @@
-﻿
-
+﻿using System;
 using System.Collections.Generic;
 using Utils;
 
@@ -7,7 +6,10 @@ namespace Board
 {
     public class BaordValidator
     {
-        private const int MATCH_COUNT = 2;
+        private const int MATCH_COUNT = 3;
+
+        public event Action<BoardValidType> OnBoardValidate;
+
         private List<List<int>> _cells;
         private List<Cell> _matchCells;
         private List<Row> _rows;
@@ -18,11 +20,11 @@ namespace Board
             _rows = rows;
         }
 
-        public List<Cell> ValidateBoard(int rowIndex, int index, out bool matchFound)
+        public void ValidateBoard(int rowIndex, int index)
         {
             _matchCells = new List<Cell>();
-
-            CheckForHorizontal(rowIndex, index, out matchFound);
+            ResetMatchCells(rowIndex, index);
+            CheckForHorizontal(rowIndex, index, out bool matchFound);
             if (!matchFound)
                 CheckForVertical(rowIndex, index, out matchFound);
             if (!matchFound)
@@ -30,12 +32,30 @@ namespace Board
             if (!matchFound)
                 CheckForDigonallyUpRightLeft(rowIndex, index, out matchFound);
 
-            return _matchCells;
+            LoggerUtil.Log("ValidateBoard status : " + _matchCells.Count + " : Match Found : "+ matchFound);
+
+            if (matchFound)
+            {
+                OnBoardValidate?.Invoke(BoardValidType.WIN);
+            }
+            else
+            {
+                OnBoardValidate?.Invoke(BoardValidType.NEXT_ROUND);
+            }
+
+            _matchCells.Clear();
+        }
+
+        private void ResetMatchCells(int rowIndex, int index)
+        {
+            _matchCells.Clear();
+            _matchCells.Add(_rows[rowIndex].Cells[index]);
         }
 
         private void CheckForDigonallyUpRightLeft(int rowIndex, int index, out bool matchFound)
         {
             matchFound = false;
+            ResetMatchCells(rowIndex, index);
             //Check For Digonally Up - Right
             LoggerUtil.Log("Checking Daigonally Up : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index + 1, j = rowIndex - 1; i < _cells[rowIndex].Count; i++, j--)
@@ -76,6 +96,7 @@ namespace Board
         private void CheckForDigonallyDownRightLeft(int rowIndex, int index, out bool matchFound)
         {
             matchFound = false;
+            ResetMatchCells(rowIndex, index);
             //Check For Digonally Down - Right
             LoggerUtil.Log("Checking Daigonally Down : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index + 1, j = rowIndex + 1; i < _cells[rowIndex].Count; i++, j++)
@@ -116,6 +137,7 @@ namespace Board
         private void CheckForVertical(int rowIndex, int index, out bool matchFound)
         {
             matchFound = false;
+            ResetMatchCells(rowIndex, index);
             //check for Vetical Up - 
             LoggerUtil.Log("Checking Vertical : Up : Count : " + _matchCells.Count);
             for (int i = rowIndex - 1; i >= 0; i--)
@@ -150,6 +172,7 @@ namespace Board
         private void CheckForHorizontal(int rowIndex, int index, out bool matchFound)
         {
             matchFound = false;
+            ResetMatchCells(rowIndex, index);
             //check for Horizontal right - 
             LoggerUtil.Log("Checking Horizontal : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index + 1; i < _cells[rowIndex].Count; i++)
@@ -180,5 +203,12 @@ namespace Board
                     break;
             }
         }
+    }
+
+    public enum BoardValidType
+    {
+        WIN,
+        DRAW,
+        NEXT_ROUND
     }
 }

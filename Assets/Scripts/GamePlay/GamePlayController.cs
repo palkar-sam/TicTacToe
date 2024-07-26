@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
+using Model;
 
 public class GamePlayController : PhotonBaseView
 {
@@ -46,6 +47,7 @@ public class GamePlayController : PhotonBaseView
     protected override void OnBackClick()
     {
         base.OnBackClick();
+        EventManager<BoardModel>.StopListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
         SceneManager.LoadSceneAsync(1);
     }
 
@@ -56,10 +58,10 @@ public class GamePlayController : PhotonBaseView
 
     private void RegoisterEvents()
     {
-        EventManager.StartListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
+        EventManager<BoardModel>.StartListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
     }
 
-    private void OnRoundComplete()
+    private void OnRoundComplete(BoardModel model)
     {
         summaryView.SetVisibility(true);
     }

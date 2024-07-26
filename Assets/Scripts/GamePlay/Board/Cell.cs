@@ -13,7 +13,9 @@ namespace Board
     {
         [SerializeField] private Image imageObj;
 
-        private int _id;
+        public int Index => _index;
+
+        private int _index;
         private int _rowId;
 
         public void OnPointerClick(PointerEventData eventData)
@@ -21,10 +23,7 @@ namespace Board
             LoggerUtil.Log(name + " Game Object Clicked!");
             if (!IsSelected)
             {
-                ColorUtility.TryParseHtmlString("#" + CardBoard.SelectedCode, out Color parsedColor);
-                imageObj.color = parsedColor;
-                IsSelected = true;
-                OnCellClicked(_rowId, _id);
+                UpdateCell();
             }
             else
             {
@@ -32,18 +31,26 @@ namespace Board
             }
         }
 
-        public override void SetData(int rowIndex, int index)
+        public override void SetData(int id, int rowIndex, int index)
         {
             _rowId = rowIndex;
-            _id = index;
-            Id = _id;
-            label.text = $"({_rowId},{_id})";
+            _index = index;
+            Id = id;
+            label.text = $"({_rowId},{_index})";
             FindNeighbors(index);
         }
 
         public void UpdateLabel(int selectedVal)
         {
-            label.text = $"({_rowId},{_id},{selectedVal})";
+            label.text = $"({_rowId},{_index},{selectedVal})";
+        }
+
+        public void UpdateCell()
+        {
+            ColorUtility.TryParseHtmlString("#" + CardBoard.SelectedCode, out Color parsedColor);
+            imageObj.color = parsedColor;
+            IsSelected = true;
+            OnCellClicked(_rowId, _index);
         }
     }
 }

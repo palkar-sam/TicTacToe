@@ -18,7 +18,7 @@ namespace Board
 
         protected List<List<int>> neighbors;
 
-        public abstract void SetData(int rowIndex, int index);
+        public abstract void SetData(int id, int rowIndex, int index);
 
         protected void OnCellClicked(int rowIndex, int index)
         {
@@ -62,7 +62,5 @@ namespace Board
 
             neighbors.Add(tempArr);
         }
-        
-        
     }
 }
