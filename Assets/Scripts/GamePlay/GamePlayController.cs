@@ -63,6 +63,7 @@ public class GamePlayController : PhotonBaseView
 
     private void OnRoundComplete(BoardModel model)
     {
+        summaryView.SetData(new Gameplay.Rewards.RewardsData() { Coins = 10 });
         summaryView.SetVisibility(true);
     }
 }

@@ -211,4 +211,10 @@ namespace Board
         DRAW,
         NEXT_ROUND
     }
+
+    public enum Winner
+    {
+        USER,
+        AI
+    }
 }

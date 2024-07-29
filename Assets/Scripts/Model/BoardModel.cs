@@ -5,6 +5,7 @@ namespace Model
     public class BoardModel : BaseModel
     {
         public BoardValidType Type;
+        public Winner Winner;
     }
 
 }

@@ -83,7 +83,6 @@ namespace Board
             {
                 LoggerUtil.Log("WIN : " + _currentPlayer);
                 EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN });
-                EventManager.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE);
             }
             else
             {
@@ -102,7 +101,7 @@ namespace Board
                 //_currentPlayer = _currentPlayer == BoardPlayers.PLAYER_X ? BoardPlayers.PLAYER_O : BoardPlayers.PLAYER_X;
                 LoggerUtil.Log("Next Player : " + _currentPlayer);
                 UpdateRoundText();
-                if (_currentPlayer == BoardPlayers.PLAYER_O)
+                if (_currentPlayer == BoardPlayers.PLAYER_O && GameManager.Instance.IsSinglePlayer)
                     StartCoroutine(PlayAiMove());
 
             }

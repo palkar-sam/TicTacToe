@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => _instance;
 
     public bool IsMultiplayer { get; set; }
+    public bool Is1vs1Enabled { get; set; }
+    public bool IsSinglePlayer { get; set; }
+
     public string UserName { get; set; } = "Dummy";
     public string UserColorCode;
     public string AiColorCode;

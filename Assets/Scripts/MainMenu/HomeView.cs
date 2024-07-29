@@ -42,8 +42,11 @@ namespace MainMenu
             OnOpenJoinDialog?.Invoke();
         }
 
-        public void PlaySinglePlayerRound()
+        public void PlaySinglePlayerRound(int mode)
         {
+            GameManager.Instance.Is1vs1Enabled = mode == 1;
+            GameManager.Instance.IsSinglePlayer = mode == 0;
+
             if (string.IsNullOrEmpty(CardBoard.SelectedCode))
             {
                 GameManager.Instance.UserColorCode = CardBoard.SelectedCode = PaletteView.DefaultColor;
