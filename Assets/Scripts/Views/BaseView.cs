@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Views
@@ -6,6 +7,8 @@ namespace Views
     public class BaseView : MonoBehaviour, IView
     {
         [SerializeField] private Button backButton;
+
+        public event Action OnHide;
 
         protected virtual void OnBackClick()
         {
@@ -25,6 +28,7 @@ namespace Views
         public void SetVisibility(bool isVisible)
         {
             gameObject.SetActive(isVisible);
+            OnHide?.Invoke();
         }
 
         private void OnEnable()

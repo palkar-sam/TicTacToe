@@ -1,63 +1,88 @@
 using Board;
 using Palettes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Utils;
 using Views;
 
-public class HomeView : BaseView
+namespace MainMenu
 {
-    [SerializeField] private GameObject buttonsContainer;
-    [SerializeField] private Button singlePlayerButton;
-    [SerializeField] private Button mulitiPlayerButton;
-    [SerializeField] private GameObject singlePlayerPanel;
-    [SerializeField] private GameObject mulitiPlayerPanel;
-
-    public event Action OnCreate;
-    public event Action OnOpenJoinDialog;
-
-    public override void OnInitialize()
+    public class HomeView : BaseView
     {
-        base.OnInitialize();
-        singlePlayerButton.onClick.AddListener(() => { ShowModePanel(0); });
-        mulitiPlayerButton.onClick.AddListener(() => { ShowModePanel(1); });
-    }
+        [SerializeField] private GameObject buttonsContainer;
+        [SerializeField] private List<CustomButton> homeBtns;
+        [SerializeField] private List<PlayerSelectionPanel> modeSeletionPanels;
 
-    public void ShowCreateDialog()
-    {
-        OnCreate?.Invoke();
-    }
+        public event Action OnCreate;
+        public event Action OnOpenJoinDialog;
 
-    public void ShowJoinDialog()
-    {
-        OnOpenJoinDialog?.Invoke();
-    }
-
-    public void PlaySinglePlayerRound()
-    {
-        if (string.IsNullOrEmpty(CardBoard.SelectedCode))
+        public override void OnInitialize()
         {
-            GameManager.Instance.UserColorCode = CardBoard.SelectedCode = PaletteView.DefaultColor;
+            base.OnInitialize();
+
+            for (int i = 0; i < homeBtns.Count; i++)
+            {
+                homeBtns[i].AddListener(ShowModePanel, i);
+                modeSeletionPanels[i].OnHide += () => { buttonsContainer.SetActive(true); };
+            }
+
+            ShowModePanel(-1);
         }
 
-        GameManager.Instance.AiColorCode = PaletteView.GetAiColorCode(GameManager.Instance.UserColorCode);
-        SceneManager.LoadSceneAsync(2);
-    }
-
-    private void ShowModePanel(int mode)
-    {
-        buttonsContainer.SetActive(false);
-        singlePlayerPanel.SetActive(mode == 0);
-        mulitiPlayerPanel.SetActive(mode == 1);
-
-        if(mode == 1)
+        public void ShowCreateDialog()
         {
-            GameManager.Instance.IsMultiplayer = true;
-            mulitiPlayerPanel.SetActive(true);
-            NetworkManager.Instance.ConnectToServer();
+            OnCreate?.Invoke();
+        }
+
+        public void ShowJoinDialog()
+        {
+            OnOpenJoinDialog?.Invoke();
+        }
+
+        public void PlaySinglePlayerRound()
+        {
+            if (string.IsNullOrEmpty(CardBoard.SelectedCode))
+            {
+                GameManager.Instance.UserColorCode = CardBoard.SelectedCode = PaletteView.DefaultColor;
+            }
+
+            GameManager.Instance.AiColorCode = PaletteView.GetAiColorCode(GameManager.Instance.UserColorCode);
+            SceneManager.LoadSceneAsync(2);
+        }
+
+        private void OnDestroy()
+        {
+            for (int i = 0; i < homeBtns.Count; i++)
+            {
+                homeBtns[i].RemoveListener();
+                modeSeletionPanels[i].OnHide -= () => { ShowModePanel(-1); };
+            }
+        }
+
+        private void ShowModePanel(int mode)
+        {
+            for (int i = 0; i < modeSeletionPanels.Count; i++)
+            {
+                modeSeletionPanels[i].SetVisibility(mode == i);
+            }
+
+            buttonsContainer.SetActive(mode == -1);
+
+            switch (mode)
+            {
+                case 1:
+                    GameManager.Instance.IsMultiplayer = true;
+                    NetworkManager.Instance.ConnectToServer();
+                    break;
+                default:
+                    LoggerUtil.Log("Home Panel : Incorrect button index : " + mode);
+                    break;
+            }
+
         }
     }
 }
+

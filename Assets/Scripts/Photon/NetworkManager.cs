@@ -12,6 +12,8 @@ public class NetworkManager : PhotonBaseView
     private static NetworkManager _instance;
     private static readonly object lockObj = new object();
 
+    public bool IsConnected => PhotonNetwork.IsConnected;
+
     [SerializeField] private Text status;
     [SerializeField] private GameObject loader;
 
@@ -38,9 +40,18 @@ public class NetworkManager : PhotonBaseView
 
     public void ConnectToServer()
     {
-        PhotonNetwork.ConnectUsingSettings();
+        if(PhotonNetwork.IsConnected)
+            PhotonNetwork.JoinLobby();
+        else
+            PhotonNetwork.ConnectUsingSettings();
         //status.text = "Loading ***";
         loader.SetActive(true);
+    }
+
+    public void DisconnectToServer()
+    {
+        if (PhotonNetwork.IsConnected)
+            PhotonNetwork.Disconnect();
     }
 
     private void Awake()

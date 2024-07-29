@@ -13,4 +13,11 @@ namespace Props
         ON_ROUND_STARTED,
         ON_ROUND_COMPLETE
     }
+
+    public enum ButtonName
+    {
+        SinglePlayer,
+        Multiplayer,
+        TwoPlayer
+    }
 }
