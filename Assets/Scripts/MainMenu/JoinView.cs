@@ -44,4 +44,9 @@ public class JoinView : BaseView
     {
         NetworkManager.Instance.JoinRoom(joinText.text);
     }
+
+    private void OnDestroy()
+    {
+        EventManager<RoomListModel>.StopListening(Props.GameEvents.ON_ROOM_LIST_UPDATE, OnRoomListUpdate);
+    }
 }
