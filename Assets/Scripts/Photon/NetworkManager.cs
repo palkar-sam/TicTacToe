@@ -4,6 +4,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
 using Views;
@@ -18,6 +19,8 @@ public class NetworkManager : PhotonBaseView
     private static readonly object lockObj = new object();
 
     public bool IsConnected => PhotonNetwork.IsConnected;
+    public string RoomName => PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.Name : string.Empty;
+
     public string ActiveUserName { get; set; }
 
     [SerializeField] private Text statusText;
@@ -92,6 +95,7 @@ public class NetworkManager : PhotonBaseView
         base.OnPlayerEnteredRoom(newPlayer);
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && PhotonNetwork.IsMasterClient)
         {
+            StartCoroutine(HideLoader(0.2f));
             PhotonNetwork.LoadLevel(2);
         }
     }
@@ -106,6 +110,25 @@ public class NetworkManager : PhotonBaseView
     {
         base.OnErrorInfo(errorInfo);
         LoggerUtil.Log("NetworkManager : OnErrorInfo : "+ errorInfo.Info);
+    }
+
+    public override void OnLeftRoom()
+    {
+        LoggerUtil.Log("NetworkManager : OnLeftRoom ............");
+        base.OnLeftRoom();
+        SceneManager.LoadSceneAsync(1);
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        base.OnMasterClientSwitched(newMasterClient);
+        LoggerUtil.Log("NetworkManager : OnMasterClientSwitched : New Master : "+ newMasterClient.NickName);
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        base.OnPlayerLeftRoom(otherPlayer); 
+        LoggerUtil.Log("NetworkManager : OnPlayerLeftRoom : New Master : " + otherPlayer.NickName);
     }
 
     public void ConnectToServer()

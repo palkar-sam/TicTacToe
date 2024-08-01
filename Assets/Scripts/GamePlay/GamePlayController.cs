@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Utils;
 using Model;
 
-public class GamePlayController : PhotonBaseView
+public class GamePlayController : BaseView
 {
     [SerializeField] private TextMeshProUGUI roomNameText;
     [SerializeField] private SummaryView summaryView;
@@ -18,7 +18,7 @@ public class GamePlayController : PhotonBaseView
 
         if (GameManager.Instance.IsMultiplayer)
         {
-            roomNameText.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
+            roomNameText.text = "Room : " + NetworkManager.Instance.RoomName;
         }
         else
         {
@@ -26,19 +26,6 @@ public class GamePlayController : PhotonBaseView
         }
 
         RegoisterEvents();
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        LoggerUtil.Log("GamePlayController : Photon Connected to master ............");
-        base.OnConnectedToMaster();
-    }
-
-    public override void OnLeftRoom()
-    {
-        LoggerUtil.Log("GamePlayController : OnLeftRoom ............");
-        base.OnLeftRoom();
-        SceneManager.LoadSceneAsync(1);
     }
 
     protected override void OnBackClick()
