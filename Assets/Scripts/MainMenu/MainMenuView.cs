@@ -29,6 +29,7 @@ namespace MainMenu
         {
             EventManager.StopListening(Props.GameEvents.ON_SHOW_MP_CREATEROOM, OnShowCreateDialog);
             EventManager.StopListening(Props.GameEvents.ON_SHOW_MP_JOINROOM, OnShowJoinDialog);
+            EventManager.StopListening(Props.GameEvents.ON_DISCONNECTED, OnDisconnected);
         }
 
         private void OnDisconnected()

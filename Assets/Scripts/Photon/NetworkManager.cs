@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using Utils;
 using Views;
 
-public class NetworkManager : PhotonBaseView
+public class NetworkManager : PhotonBaseView, IPunObservable
 {
     private const int MAX_PLAYER = 2;
 
@@ -38,6 +38,7 @@ public class NetworkManager : PhotonBaseView
         PhotonNetwork.GameVersion = _gameVersion;
     }
 
+    #region MonobehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
@@ -131,6 +132,22 @@ public class NetworkManager : PhotonBaseView
         base.OnPlayerLeftRoom(otherPlayer); 
         LoggerUtil.Log("NetworkManager : OnPlayerLeftRoom : Other Player : " + otherPlayer.NickName);
     }
+    #endregion
+
+    #region IPunObservable interface Functions, Photon event handling and synchronisaton.
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if(stream.IsWriting)
+        {
+            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : sending : Sameer Is writing");
+            stream.SendNext("Sameer Is writing");
+        }
+        else
+        {
+            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : recieving : "+stream.ReceiveNext());
+        }
+    }
+    #endregion
 
     public void ConnectToServer()
     {
@@ -240,4 +257,5 @@ public class NetworkManager : PhotonBaseView
         yield return new WaitForSeconds(delay);
         loader.SetActive(false);
     }
+
 }
