@@ -93,6 +93,7 @@ public class NetworkManager : PhotonBaseView
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         base.OnPlayerEnteredRoom(newPlayer);
+        LoggerUtil.Log("NetworkManager : OnPlayerEnteredRoom : " + newPlayer.NickName+" : Total Player Count : "+ PhotonNetwork.CurrentRoom.PlayerCount);
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && PhotonNetwork.IsMasterClient)
         {
             StartCoroutine(HideLoader(0.2f));
@@ -128,7 +129,7 @@ public class NetworkManager : PhotonBaseView
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         base.OnPlayerLeftRoom(otherPlayer); 
-        LoggerUtil.Log("NetworkManager : OnPlayerLeftRoom : New Master : " + otherPlayer.NickName);
+        LoggerUtil.Log("NetworkManager : OnPlayerLeftRoom : Other Player : " + otherPlayer.NickName);
     }
 
     public void ConnectToServer()
