@@ -10,17 +10,14 @@ using Model;
 public class GamePlayController : PhotonBaseView
 {
     [SerializeField] private TextMeshProUGUI roomNameText;
-    [SerializeField] private Button leaveRoomButton;
     [SerializeField] private SummaryView summaryView;
 
     public override void OnInitialize()
     {
         base.OnInitialize();
-        leaveRoomButton.gameObject.SetActive(GameManager.Instance.IsMultiplayer);
 
         if (GameManager.Instance.IsMultiplayer)
         {
-            leaveRoomButton.onClick.AddListener(OnLeaveRoom);
             roomNameText.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
         }
         else
@@ -48,12 +45,7 @@ public class GamePlayController : PhotonBaseView
     {
         base.OnBackClick();
         DeRegoisterEvents();
-        SceneManager.LoadSceneAsync(1);
-    }
-
-    public void OnLeaveRoom()
-    {
-        PhotonNetwork.LeaveRoom();
+        NetworkManager.Instance.LeaveRoom();
     }
 
     private void RegoisterEvents()

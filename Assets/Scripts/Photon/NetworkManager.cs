@@ -163,6 +163,11 @@ public class NetworkManager : PhotonBaseView
             PhotonNetwork.Disconnect();
     }
 
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+
     private void CreateRandomRoom(string roomName)
     {
         RoomOptions options = new RoomOptions { MaxPlayers = MAX_PLAYER };
