@@ -13,6 +13,7 @@ public class SummaryView : BaseView
     public void SetData(RewardsData data)
     {
         rewardItem.SetData(data.Coins);
-        descText.text = data.Winner.ToString(); 
+        descText.text = data.Type == Board.BoardValidType.WIN ? data.Winner.ToString() 
+            : data.Type == Board.BoardValidType.DRAW ? "DRAW!" : "---"; 
     }
 }

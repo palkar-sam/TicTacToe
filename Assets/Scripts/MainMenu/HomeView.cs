@@ -16,9 +16,6 @@ namespace MainMenu
         [SerializeField] private List<CustomButton> homeBtns;
         [SerializeField] private List<PlayerSelectionPanel> modeSeletionPanels;
 
-        public event Action OnCreate;
-        public event Action OnOpenJoinDialog;
-
         public override void OnInitialize()
         {
             base.OnInitialize();
@@ -26,20 +23,16 @@ namespace MainMenu
             for (int i = 0; i < homeBtns.Count; i++)
             {
                 homeBtns[i].AddListener(ShowModePanel, i);
-                modeSeletionPanels[i].OnHide += () => { buttonsContainer.SetActive(true); };
+                modeSeletionPanels[i].OnHide += () => { ShowLobby(); };
             }
 
             ShowModePanel(-1);
         }
 
-        public void ShowCreateDialog()
+        public override void OnShow()
         {
-            OnCreate?.Invoke();
-        }
-
-        public void ShowJoinDialog()
-        {
-            OnOpenJoinDialog?.Invoke();
+            base.OnShow();
+            GameManager.Instance.IsMultiplayer = false;
         }
 
         public void PlaySinglePlayerRound(int mode)
@@ -54,6 +47,12 @@ namespace MainMenu
 
             GameManager.Instance.AiColorCode = PaletteView.GetAiColorCode(GameManager.Instance.UserColorCode);
             SceneManager.LoadSceneAsync(2);
+        }
+
+        public void ShowLobby()
+        {
+            GameManager.Instance.IsMultiplayer = false;
+            buttonsContainer.SetActive(true);
         }
 
         private void OnDestroy()
@@ -73,12 +72,12 @@ namespace MainMenu
             }
 
             buttonsContainer.SetActive(mode == -1);
-
+            GameManager.Instance.IsMultiplayer = false;
             switch (mode)
             {
                 case 1:
                     GameManager.Instance.IsMultiplayer = true;
-                    NetworkManager.Instance.ConnectToServer();
+                    //NetworkManager.Instance.ConnectToServer();
                     break;
                 default:
                     LoggerUtil.Log("Home Panel : Incorrect button index : " + mode);

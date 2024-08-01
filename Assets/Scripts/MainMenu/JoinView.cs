@@ -1,27 +1,26 @@
+using Model;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Utils;
 using Views;
 
-public class JoinView : PhotonBaseView
+public class JoinView : BaseView
 {
     [SerializeField] private TextMeshProUGUI joinText;
     [SerializeField] private RoomListPanel roomListPanel;
-
-    public override void OnShow()
-    {
-        base.OnShow();
-        PhotonNetwork.JoinLobby();
-    }
+    [SerializeField] private Button joinButton;
 
     public override void OnInitialize()
     {
         base.OnInitialize();
         roomListPanel.OnRoomSelected += JoinRoom;
+        EventManager<RoomListModel>.StartListening(Props.GameEvents.ON_ROOM_LIST_UPDATE, OnRoomListUpdate);
+        joinButton.onClick.AddListener(OnJoinRoom);
     }
 
     public void OnJoinRoom()
@@ -30,35 +29,19 @@ public class JoinView : PhotonBaseView
         JoinRoom(str);
     }
 
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    protected override void OnBackClick()
     {
-        base.OnRoomListUpdate(roomList);
-        roomListPanel.UpdateRoomList(roomList);
+        base.OnBackClick();
+        NetworkManager.Instance.DisconnectToServer();
     }
 
-    public override void OnJoinedRoom()
+    private void OnRoomListUpdate(RoomListModel model)
     {
-        base.OnJoinedRoom();
-        LoggerUtil.Log("JoinView : OnJoinedRoom");
-        PhotonNetwork.LoadLevel(2);
-    }
-
-    public override void OnJoinedLobby()
-    {
-        base.OnJoinedLobby();
-        LoggerUtil.Log("JoinView : OnJoinedLobby");
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        base.OnConnectedToMaster();
-        LoggerUtil.Log("JoinView : OnConnectedToMaster");
-        PhotonNetwork.JoinLobby();
+        roomListPanel.UpdateRoomList(model.RoomList);
     }
 
     private void JoinRoom(string roomName)
     {
-        if (!string.IsNullOrEmpty(roomName))
-            PhotonNetwork.JoinRoom(roomName);
+        NetworkManager.Instance.JoinRoom(joinText.text);
     }
 }

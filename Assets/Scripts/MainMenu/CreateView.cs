@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,23 +7,19 @@ using UnityEngine;
 using Utils;
 using Views;
 
-public class CreateView : PhotonBaseView
+public class CreateView : BaseView
 {
     [SerializeField] private TextMeshProUGUI inputText;
 
     public void CreateRoom()
     {
-        string str = inputText.text;
-
-        if (!string.IsNullOrEmpty(str))
-            PhotonNetwork.CreateRoom(str);
+        NetworkManager.Instance.CreateRoom(inputText.text);
     }
 
-    public override void OnJoinedRoom()
+    protected override void OnBackClick()
     {
-        LoggerUtil.Log("On JoinRoom ---- ");
-        base.OnJoinedRoom();
-        PhotonNetwork.LoadLevel(2);
+        base.OnBackClick();
+        NetworkManager.Instance.DisconnectToServer();
     }
 
 }

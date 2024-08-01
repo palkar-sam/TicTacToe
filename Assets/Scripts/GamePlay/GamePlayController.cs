@@ -47,7 +47,7 @@ public class GamePlayController : PhotonBaseView
     protected override void OnBackClick()
     {
         base.OnBackClick();
-        EventManager<BoardModel>.StopListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
+        DeRegoisterEvents();
         SceneManager.LoadSceneAsync(1);
     }
 
@@ -59,11 +59,18 @@ public class GamePlayController : PhotonBaseView
     private void RegoisterEvents()
     {
         EventManager<BoardModel>.StartListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
+        summaryView.OnHide += () => { OnBackClick(); };
+    }
+
+    private void DeRegoisterEvents()
+    {
+        EventManager<BoardModel>.StopListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
+        summaryView.OnHide -= () => { OnBackClick(); };
     }
 
     private void OnRoundComplete(BoardModel model)
     {
-        summaryView.SetData(new Gameplay.Rewards.RewardsData() { Coins = 10 });
+        summaryView.SetData(new Gameplay.Rewards.RewardsData() { Coins = 10, Winner = model.Winner, Type = model.Type });
         summaryView.SetVisibility(true);
     }
 }

@@ -25,10 +25,19 @@ namespace Views
         {
         }
 
+        public virtual void OnHidePanel()
+        {
+        }
+
         public void SetVisibility(bool isVisible)
         {
             gameObject.SetActive(isVisible);
-            OnHide?.Invoke();
+
+            if (!isVisible)
+            {
+                OnHidePanel();
+                OnHide?.Invoke();
+            }
         }
 
         private void OnEnable()

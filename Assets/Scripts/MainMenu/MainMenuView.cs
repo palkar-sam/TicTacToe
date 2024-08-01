@@ -9,14 +9,32 @@ namespace MainMenu
         [SerializeField] private JoinView joinView;
         [SerializeField] private HomeView homeView;
 
-        private void Start()
+        public override void OnShow()
         {
+            base.OnShow();
+
             createView.SetVisibility(false);
             joinView.SetVisibility(false);
             //homeView.SetVisibility(true);
 
-            homeView.OnCreate += OnShowCreateDialog;
-            homeView.OnOpenJoinDialog += OnOpenJoinDialog;
+            //createView.OnHide += OnShowHomeView;
+            //joinView.OnHide += OnShowHomeView;
+
+            EventManager.StartListening(Props.GameEvents.ON_SHOW_MP_CREATEROOM, OnShowCreateDialog);
+            EventManager.StartListening(Props.GameEvents.ON_SHOW_MP_JOINROOM, OnShowJoinDialog);
+            EventManager.StartListening(Props.GameEvents.ON_DISCONNECTED, OnDisconnected);
+        }
+
+        private void OnDestroy()
+        {
+            EventManager.StopListening(Props.GameEvents.ON_SHOW_MP_CREATEROOM, OnShowCreateDialog);
+            EventManager.StopListening(Props.GameEvents.ON_SHOW_MP_JOINROOM, OnShowJoinDialog);
+        }
+
+        private void OnDisconnected()
+        {
+            OnShowHomeView();
+            homeView.ShowLobby();
         }
 
         private void OnShowCreateDialog()
@@ -26,12 +44,20 @@ namespace MainMenu
             joinView.SetVisibility(false);
         }
 
-        private void OnOpenJoinDialog()
+        private void OnShowJoinDialog()
         {
             joinView.SetVisibility(true);
             createView.SetVisibility(false);
             homeView.SetVisibility(false);
         }
+
+        private void OnShowHomeView()
+        {
+            joinView.SetVisibility(false);
+            createView.SetVisibility(false);
+            homeView.SetVisibility(true);
+        }
+        
     }
 }
 

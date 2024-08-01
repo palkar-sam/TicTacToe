@@ -6,6 +6,7 @@ namespace Gameplay.Rewards
     {
         public int Coins;
         public Winner Winner;
+        public BoardValidType Type;
     }
 }
 

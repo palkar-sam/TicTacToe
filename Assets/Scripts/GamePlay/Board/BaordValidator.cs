@@ -38,6 +38,10 @@ namespace Board
             {
                 OnBoardValidate?.Invoke(BoardValidType.WIN);
             }
+            else if (_matchCells.Count == (_cells[0].Count * _cells.Count))
+            {
+                OnBoardValidate?.Invoke(BoardValidType.DRAW);
+            }
             else
             {
                 OnBoardValidate?.Invoke(BoardValidType.NEXT_ROUND);

@@ -82,7 +82,8 @@ namespace Board
             if (type == BoardValidType.WIN)
             {
                 LoggerUtil.Log("WIN : " + _currentPlayer);
-                EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN });
+                EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN, 
+                        Winner = _currentPlayer == BoardPlayers.PLAYER_X ? Winner.USER : Winner.AI });
             }
             else
             {
