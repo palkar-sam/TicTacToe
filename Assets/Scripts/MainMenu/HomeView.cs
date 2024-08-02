@@ -23,7 +23,7 @@ namespace MainMenu
             for (int i = 0; i < homeBtns.Count; i++)
             {
                 homeBtns[i].AddListener(ShowModePanel, i);
-                modeSeletionPanels[i].OnHide += () => { ShowLobby(); };
+                //modeSeletionPanels[i].OnHide += () => { ShowLobby(); };
             }
 
             ShowModePanel(-1);

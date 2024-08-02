@@ -73,16 +73,26 @@ namespace Board
 
         private void OnCellSelected(int rowIndex, int index)
         {
-            if(GameManager.Instance.IsMultiplayer)
+            LoggerUtil.Log("CardBoard : OnCellSelected : MP Mode : " + GameManager.Instance.IsMultiplayer);
+            if (GameManager.Instance.IsMultiplayer)
             {
-                if (photonView != null && photonView.IsMine)
+                LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView : " + photonView);
+                if (photonView != null)
                 {
-                    CellPlayed(rowIndex, index);
+                    LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView.isMine : " + photonView.IsMine);
+                    if (photonView.IsMine)
+                    {
+                        CellPlayed(rowIndex, index);
+                    }
+                    else
+                    {
+                        NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new Vector2(rowIndex, index),
+                            Photon.Realtime.RaiseEventOptions.Default, ExitGames.Client.Photon.SendOptions.SendReliable);
+                    }
                 }
                 else
                 {
-                    NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new Vector2(rowIndex, index),
-                        Photon.Realtime.RaiseEventOptions.Default, ExitGames.Client.Photon.SendOptions.SendReliable);
+                    LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView : is Null.");
                 }
             }
             else
@@ -214,7 +224,7 @@ namespace Board
 
         private void ProcessCell(int rowIndex, int cellIndex)
         {
-            OnCellSelected(rowIndex, cellIndex);
+            CellPlayed(rowIndex, cellIndex);
             rows[rowIndex].Cells[cellIndex].UpdateCell();
         }
         #endregion

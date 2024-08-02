@@ -202,6 +202,7 @@ public class NetworkManager : PhotonBaseView
 
     public void RaiseEvent(NetworkEvents eventType, Vector2 cells, RaiseEventOptions defaultEventOps, SendOptions options)
     {
+        LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : "+eventType);
         PhotonNetwork.RaiseEvent((byte)eventType, cells, defaultEventOps, options);
     }
 
