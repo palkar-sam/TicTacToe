@@ -1,6 +1,8 @@
+using ExitGames.Client.Photon;
 using Model;
 using Photon.Pun;
 using Photon.Realtime;
+using Props;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using UnityEngine.UI;
 using Utils;
 using Views;
 
-public class NetworkManager : PhotonBaseView, IPunObservable
+public class NetworkManager : PhotonBaseView
 {
     private const int MAX_PLAYER = 2;
 
@@ -21,8 +23,6 @@ public class NetworkManager : PhotonBaseView, IPunObservable
 
     [SerializeField] private Text statusText;
     [SerializeField] private GameObject loader;
-
-    public event Action<Vector2, int> OnDataRecived;
 
     public bool IsConnected => PhotonNetwork.IsConnected;
     public string RoomName => PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.Name : string.Empty;
@@ -140,25 +140,6 @@ public class NetworkManager : PhotonBaseView, IPunObservable
     }
     #endregion
 
-    #region IPunObservable interface Functions, Photon event handling and synchronisaton.
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if(stream.IsWriting)
-        {
-            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : sending : "+CellIndexs);
-            stream.SendNext(CellIndexs);
-            stream.SendNext(UserCellColorIndex);
-        }
-        else
-        {
-            Vector2 cells = (Vector2)stream.ReceiveNext();
-            int colorIndex = (int)stream.ReceiveNext();
-            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : recieving : "+cells+" : Color ind : "+colorIndex);
-            OnDataRecived?.Invoke(cells, colorIndex);
-        }
-    }
-    #endregion
-
     public void ConnectToServer()
     {
         LoggerUtil.Log("NetworkManager : ConnectToServer : ");
@@ -219,6 +200,11 @@ public class NetworkManager : PhotonBaseView, IPunObservable
         PhotonNetwork.LeaveRoom();
     }
 
+    public void RaiseEvent(NetworkEvents eventType, Vector2 cells, RaiseEventOptions defaultEventOps, SendOptions options)
+    {
+        PhotonNetwork.RaiseEvent((byte)eventType, cells, defaultEventOps, options);
+    }
+
     private void CreateRandomRoom(string roomName)
     {
         RoomOptions options = new RoomOptions { MaxPlayers = MAX_PLAYER };
@@ -229,22 +215,6 @@ public class NetworkManager : PhotonBaseView, IPunObservable
         else
         {
             PhotonNetwork.CreateRoom(roomName, options);
-        }
-    }
-
-    private void Awake()
-    {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else if (_instance == null)
-        {
-            lock (lockObj)
-            {
-                _instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
         }
     }
 
@@ -268,4 +238,19 @@ public class NetworkManager : PhotonBaseView, IPunObservable
         loader.SetActive(false);
     }
 
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else if (_instance == null)
+        {
+            lock (lockObj)
+            {
+                _instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+        }
+    }
 }

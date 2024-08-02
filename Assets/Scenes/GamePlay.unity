@@ -500,7 +500,6 @@ MonoBehaviour:
   backButton: {fileID: 1814141915}
   roomNameText: {fileID: 535387667}
   summaryView: {fileID: 1093106853}
-  cardBoard: {fileID: 1981195804}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,6 +1540,7 @@ GameObject:
   - component: {fileID: 1981195802}
   - component: {fileID: 1981195801}
   - component: {fileID: 1981195804}
+  - component: {fileID: 1981195805}
   m_Layer: 5
   m_Name: Board
   m_TagString: Untagged
@@ -1648,6 +1648,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a94e9a12a4eaece43aa4eb1a3d146a59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backButton: {fileID: 0}
   playerStatus: {fileID: 1460166012}
   rowLength: 3
   colLength: 3
@@ -1655,6 +1656,29 @@ MonoBehaviour:
   - {fileID: 2000708037}
   - {fileID: 637542507}
   - {fileID: 311756180}
+--- !u!114 &1981195805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981195798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 1
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 1981195804}
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1989342613
 GameObject:
   m_ObjectHideFlags: 0

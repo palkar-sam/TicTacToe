@@ -24,4 +24,9 @@ namespace Props
         Multiplayer,
         TwoPlayer
     }
+
+    public enum NetworkEvents
+    {
+        MOVE_EVENT
+    }
 }

@@ -44,8 +44,10 @@ namespace Views
         {
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
+            yield return null;
+
             OnInitialize();
         }
     }
