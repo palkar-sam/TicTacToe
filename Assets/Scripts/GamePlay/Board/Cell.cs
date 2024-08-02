@@ -14,6 +14,7 @@ namespace Board
         [SerializeField] private Image imageObj;
 
         public int Index => _index;
+        public int RowIndex => _rowId;
 
         private int _index;
         private int _rowId;
@@ -23,7 +24,7 @@ namespace Board
             LoggerUtil.Log(name + " Game Object Clicked!");
             if (!IsSelected)
             {
-                UpdateCell();
+                OnCellClicked(_rowId, _index);
             }
             else
             {
@@ -40,17 +41,12 @@ namespace Board
             FindNeighbors(index);
         }
 
-        public void UpdateLabel(int selectedVal)
+        public void UpdateCell(int selectedVal, string colorCode)
         {
             label.text = $"({_rowId},{_index},{selectedVal})";
-        }
-
-        public void UpdateCell()
-        {
-            ColorUtility.TryParseHtmlString("#" + CardBoard.SelectedCode, out Color parsedColor);
+            ColorUtility.TryParseHtmlString("#" + colorCode, out Color parsedColor);
             imageObj.color = parsedColor;
             IsSelected = true;
-            OnCellClicked(_rowId, _index);
         }
     }
 }

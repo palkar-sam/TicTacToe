@@ -28,9 +28,6 @@ public class NetworkManager : PhotonBaseView
     public string RoomName => PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.Name : string.Empty;
 
     public string ActiveUserName { get; set; }
-    public Vector2 CellIndexs { get; set; }
-    public int CellColor { get; set; }
-    public int UserCellColorIndex { get; set; }
 
     private string _gameVersion = "v1";
     private bool _isMasterJoiningRoom;

@@ -32,7 +32,7 @@ namespace Board
             if (!matchFound)
                 CheckForDigonallyUpRightLeft(rowIndex, index, out matchFound);
 
-            LoggerUtil.Log("ValidateBoard status : " + _matchCells.Count + " : Match Found : "+ matchFound);
+            Log("ValidateBoard status : " + _matchCells.Count + " : Match Found : "+ matchFound);
 
             if (matchFound)
             {
@@ -61,7 +61,7 @@ namespace Board
             matchFound = false;
             ResetMatchCells(rowIndex, index);
             //Check For Digonally Up - Right
-            LoggerUtil.Log("Checking Daigonally Up : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+            Log("Checking Daigonally Up : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index + 1, j = rowIndex - 1; i < _cells[rowIndex].Count; i++, j--)
             {
                 if (j >= 0)
@@ -79,7 +79,7 @@ namespace Board
             }
 
             //Check For Digonally Up - Left
-            LoggerUtil.Log("Checking Daigonally Up : Left : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+            Log("Checking Daigonally Up : Left : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index - 1, j = rowIndex - 1; i >= 0; i--, j--)
             {
                 if (j >= 0)
@@ -102,7 +102,7 @@ namespace Board
             matchFound = false;
             ResetMatchCells(rowIndex, index);
             //Check For Digonally Down - Right
-            LoggerUtil.Log("Checking Daigonally Down : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+            Log("Checking Daigonally Down : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index + 1, j = rowIndex + 1; i < _cells[rowIndex].Count; i++, j++)
             {
                 if (j < _cells.Count)
@@ -120,7 +120,7 @@ namespace Board
             }
 
             //Check For Digonally Down - Left
-            LoggerUtil.Log("Checking Daigonally Down : Left : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+            Log("Checking Daigonally Down : Left : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index - 1, j = rowIndex + 1; i >= 0; i--, j++)
             {
                 if (j < _cells.Count)
@@ -143,7 +143,7 @@ namespace Board
             matchFound = false;
             ResetMatchCells(rowIndex, index);
             //check for Vetical Up - 
-            LoggerUtil.Log("Checking Vertical : Up : Count : " + _matchCells.Count);
+            Log("Checking Vertical : Up : Count : " + _matchCells.Count);
             for (int i = rowIndex - 1; i >= 0; i--)
             {
                 if (!matchFound && _cells[rowIndex][index] == _cells[i][index])
@@ -158,7 +158,7 @@ namespace Board
             }
 
             //check for Vetical Down - 
-            LoggerUtil.Log("Checking Vertical : Down : Count : " + _matchCells.Count);
+            Log("Checking Vertical : Down : Count : " + _matchCells.Count);
             for (int i = rowIndex + 1; i < _cells.Count; i++)
             {
                 if (!matchFound && _cells[rowIndex][index] == _cells[i][index])
@@ -178,7 +178,7 @@ namespace Board
             matchFound = false;
             ResetMatchCells(rowIndex, index);
             //check for Horizontal right - 
-            LoggerUtil.Log("Checking Horizontal : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
+            Log("Checking Horizontal : Right : Count : " + _matchCells.Count + " : RowIndex : " + rowIndex + " : Index : " + index);
             for (int i = index + 1; i < _cells[rowIndex].Count; i++)
             {
                 if (!matchFound && _cells[rowIndex][index] == _cells[rowIndex][i])
@@ -193,7 +193,7 @@ namespace Board
             }
 
             //check for Horizontal left - 
-            LoggerUtil.Log("Checking Horizontal : Left : Count : " + _matchCells.Count);
+            Log("Checking Horizontal : Left : Count : " + _matchCells.Count);
             for (int i = index - 1; i >= 0; i--)
             {
                 if (!matchFound && _cells[rowIndex][index] == _cells[rowIndex][i])
@@ -206,6 +206,11 @@ namespace Board
                 else
                     break;
             }
+        }
+
+        private void Log(string str)
+        {
+            LoggerUtil.Log("Board Validation : "+ str);
         }
     }
 

@@ -28,9 +28,11 @@ namespace Board
         private List<List<int>> _cells; // This stores status of board. 0 - Ai, 1 - user, -1 - Not selected
         private List<int> _cellIndexes; // This stores all cells indexs - 0,1,2,3,4,5,6,7,8,9
         private List<Cell> _userDaubedCells = new List<Cell>();
-        private BoardPlayers _currentPlayer;
         private BaordValidator baordValidator;
-        private Vector2 _selectedCells;
+        private Vector2 _selectedCells = new Vector2(-1,-1);
+
+        private MarkType _myTurn;
+        private MarkType _turn;
 
         public override void OnInitialize()
         {
@@ -55,9 +57,24 @@ namespace Board
 
             baordValidator = new BaordValidator(_cells, rows);
             baordValidator.OnBoardValidate += OnBoardValidate;
-            _currentPlayer = BoardPlayers.PLAYER_X;
-            NetworkManager.Instance.UserCellColorIndex = PaletteView.UserCellColorIndex;
+            _myTurn = MarkType.X;
+            _turn = MarkType.X;
+            
             StartCoroutine(StartRound());
+
+            if(GameManager.Instance.IsMultiplayer)
+            {
+                if(photonView != null && photonView.IsMine)
+                {
+                    _myTurn = MarkType.X;
+                    _turn = Random.Range(0, 2) == 0 ? MarkType.O : MarkType.X;
+                }
+                else
+                {
+                    _myTurn = MarkType.O;
+                }
+            }
+
         }
 
         private IEnumerator StartRound()
@@ -68,7 +85,7 @@ namespace Board
 
         private void UpdateRoundText()
         {
-            playerStatus.text = $"Player {_currentPlayer} turn";
+            playerStatus.text = $"Player {_turn} turn";
         }
 
         private void OnCellSelected(int rowIndex, int index)
@@ -76,24 +93,32 @@ namespace Board
             LoggerUtil.Log("CardBoard : OnCellSelected : MP Mode : " + GameManager.Instance.IsMultiplayer);
             if (GameManager.Instance.IsMultiplayer)
             {
-                LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView : " + photonView);
-                if (photonView != null)
+                LoggerUtil.Log("CardBoard : OnCellSelected : Turn : " + _turn);
+                if(_myTurn != _turn)
                 {
-                    LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView.isMine : " + photonView.IsMine);
-                    if (photonView.IsMine)
+                    if (photonView != null)
                     {
-                        CellPlayed(rowIndex, index);
+                        LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView.isMine : " + photonView.IsMine);
+                        if (photonView.IsMine)
+                        {
+                            CellPlayed(rowIndex, index);
+                        }
+                        else
+                        {
+                            NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new Vector2(rowIndex, index),
+                                Photon.Realtime.RaiseEventOptions.Default, ExitGames.Client.Photon.SendOptions.SendReliable);
+                        }
                     }
                     else
                     {
-                        NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new Vector2(rowIndex, index),
-                            Photon.Realtime.RaiseEventOptions.Default, ExitGames.Client.Photon.SendOptions.SendReliable);
+                        LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView : is Null.");
                     }
                 }
                 else
                 {
-                    LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView : is Null.");
+                    LoggerUtil.Log("CardBoard : OnCellSelected : Turn : This is not you turn oppent is playing.");
                 }
+                
             }
             else
             {
@@ -103,14 +128,13 @@ namespace Board
 
         private void CellPlayed(int rowIndex, int index)
         {
-            _cells[rowIndex][index] = _currentPlayer == BoardPlayers.PLAYER_X ? 1 : 0;
-            NetworkManager.Instance.CellIndexs = new Vector2(rowIndex, index);
+            _cells[rowIndex][index] = _turn == _myTurn ? (int)MarkType.X : (int)MarkType.O;
             Cell selectedCell = rows[rowIndex].Cells[index];
-            selectedCell.UpdateLabel(_cells[rowIndex][index]);
+            selectedCell.UpdateCell(_cells[rowIndex][index], SelectedCode);
             _cellIndexes.Remove(selectedCell.Id);
             _selectedCells = new Vector2(rowIndex, index);
 
-            if (_currentPlayer == BoardPlayers.PLAYER_X)
+            if (_myTurn == MarkType.X)
             {
                 _userDaubedCells.Add(rows[rowIndex].Cells[index]);
             }
@@ -122,28 +146,28 @@ namespace Board
         {
             if (type == BoardValidType.WIN)
             {
-                LoggerUtil.Log("WIN : " + _currentPlayer);
+                LoggerUtil.Log("WIN : " + _turn);
                 EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN,
-                    Winner = _currentPlayer == BoardPlayers.PLAYER_X ? Winner.USER : Winner.AI });
+                    Winner = _turn == MarkType.X ? Winner.USER : Winner.AI });
             }
             else
             {
                 LoggerUtil.Log("Changing Player ---- ");
 
-                if (_currentPlayer == BoardPlayers.PLAYER_X)
+                if ( _turn == _myTurn)
                 {
-                    _currentPlayer = BoardPlayers.PLAYER_O;
+                    _turn = MarkType.O;
                     SelectedCode = GameManager.Instance.AiColorCode;
                 }
                 else
                 {
-                    _currentPlayer = BoardPlayers.PLAYER_X;
+                    _turn = MarkType.X;
                     SelectedCode = GameManager.Instance.UserColorCode;
                 }
-                //_currentPlayer = _currentPlayer == BoardPlayers.PLAYER_X ? BoardPlayers.PLAYER_O : BoardPlayers.PLAYER_X;
-                LoggerUtil.Log("Next Player : " + _currentPlayer);
+
+                LoggerUtil.Log("Next Player : " + _turn);
                 UpdateRoundText();
-                if (_currentPlayer == BoardPlayers.PLAYER_O && GameManager.Instance.IsSinglePlayer)
+                if (_turn == MarkType.O && GameManager.Instance.IsSinglePlayer)
                     StartCoroutine(PlayAiMove());
 
             }
@@ -151,6 +175,7 @@ namespace Board
 
         private IEnumerator PlayAiMove()
         {
+            LoggerUtil.Log("Playing AI : " + _turn);
             yield return new WaitForSeconds(0.5f);
             int cellId = GetAiMove();
             LoggerUtil.Log($"Ai : New cellId : ({cellId}");
@@ -162,15 +187,15 @@ namespace Board
                 aiCell = rows[i].Cells.Find(item => item.Id == cellId);
                 if (aiCell != null)
                 {
-                    index = i;
-                    rowIndex = aiCell.Index;
+                    rowIndex = aiCell.RowIndex;
+                    index = aiCell.Index;
                     break;
                 }
             }
-
-            LoggerUtil.Log($"Ai : Location : ({index} , {rowIndex})");
+            
+            LoggerUtil.Log($"Ai : Location : ({rowIndex} , {index}) : AI Turn : {_turn}");
             LoggerUtil.Log($"Remaining cell Positions : ({string.Join(",", _cellIndexes)})");
-            aiCell.UpdateCell();
+            OnCellSelected(rowIndex, index);
         }
 
         private int GetAiMove()
@@ -186,19 +211,27 @@ namespace Board
         #region IPunObservable interface Functions, Photon event handling and synchronisaton.
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            if (stream.IsWriting)
+            if(GameManager.Instance.IsMultiplayer)
             {
-                LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : " + _selectedCells);
-                stream.SendNext(_selectedCells);
-                stream.SendNext(0);
-            }
-            else
-            {
-                Vector2 cells = (Vector2)stream.ReceiveNext();
-                int colorIndex = (int)stream.ReceiveNext();
-                SelectedCode = PaletteView.GetColorCodeAtIndex(colorIndex);
-                LoggerUtil.Log("CardBoard : OnPhotonSerializeView : recieving : " + cells + " : Color ind : " + colorIndex);
-                ProcessCell((int)cells.x, (int)cells.y);
+                if (stream.IsWriting)
+                {
+                    LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : " + _selectedCells);
+                    if (_selectedCells.x > -1 || _selectedCells.y > -1)
+                    {
+                        stream.SendNext(_selectedCells);
+                        stream.SendNext(_turn);
+                        stream.SendNext(0);
+                    }
+                }
+                else
+                {
+                    Vector2 cells = (Vector2)stream.ReceiveNext();
+                    _turn = (MarkType)stream.ReceiveNext();
+                    int colorIndex = (int)stream.ReceiveNext();
+                    SelectedCode = PaletteView.GetColorCodeAtIndex(colorIndex);
+                    LoggerUtil.Log("CardBoard : OnPhotonSerializeView : recieving : " + cells + " : Color ind : " + colorIndex);
+                    ProcessCell((int)cells.x, (int)cells.y);
+                }
             }
         }
 
@@ -225,9 +258,16 @@ namespace Board
         private void ProcessCell(int rowIndex, int cellIndex)
         {
             CellPlayed(rowIndex, cellIndex);
-            rows[rowIndex].Cells[cellIndex].UpdateCell();
+            rows[rowIndex].Cells[cellIndex].UpdateCell(_cells[rowIndex][cellIndex], SelectedCode);
         }
         #endregion
+    }
+
+    public enum MarkType
+    {
+        NONE,
+        O,
+        X
     }
 }
 
