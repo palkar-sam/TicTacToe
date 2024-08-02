@@ -20,7 +20,7 @@ namespace Palettes
 
         public static string GetColorCodeAtIndex(int index)
         {
-            return _instance.palettes[index].GetPaletteColor();
+            return _instance == null ? "FF0000": _instance.palettes[index].GetPaletteColor();
         }
 
 
