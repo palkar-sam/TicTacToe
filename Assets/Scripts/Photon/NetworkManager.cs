@@ -1,6 +1,7 @@
 using Model;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,17 +19,22 @@ public class NetworkManager : PhotonBaseView, IPunObservable
     private static NetworkManager _instance;
     private static readonly object lockObj = new object();
 
+    [SerializeField] private Text statusText;
+    [SerializeField] private GameObject loader;
+
+    public event Action<Vector2, int> OnDataRecived;
+
     public bool IsConnected => PhotonNetwork.IsConnected;
     public string RoomName => PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.Name : string.Empty;
 
     public string ActiveUserName { get; set; }
-
-    [SerializeField] private Text statusText;
-    [SerializeField] private GameObject loader;
+    public Vector2 CellIndexs { get; set; }
+    public int CellColor { get; set; }
+    public int UserCellColorIndex { get; set; }
 
     private string _gameVersion = "v1";
     private bool _isMasterJoiningRoom;
-
+    
     public override void OnInitialize()
     {
         base.OnInitialize();
@@ -139,12 +145,16 @@ public class NetworkManager : PhotonBaseView, IPunObservable
     {
         if(stream.IsWriting)
         {
-            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : sending : Sameer Is writing");
-            stream.SendNext("Sameer Is writing");
+            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : sending : "+CellIndexs);
+            stream.SendNext(CellIndexs);
+            stream.SendNext(UserCellColorIndex);
         }
         else
         {
-            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : recieving : "+stream.ReceiveNext());
+            Vector2 cells = (Vector2)stream.ReceiveNext();
+            int colorIndex = (int)stream.ReceiveNext();
+            LoggerUtil.Log("NetworkManager : OnPhotonSerializeView : recieving : "+cells+" : Color ind : "+colorIndex);
+            OnDataRecived?.Invoke(cells, colorIndex);
         }
     }
     #endregion

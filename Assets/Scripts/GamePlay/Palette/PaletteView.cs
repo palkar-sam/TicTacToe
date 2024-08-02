@@ -11,9 +11,16 @@ namespace Palettes
 
         private static PaletteView _instance;
 
+        public static int UserCellColorIndex = 1;
+
         public static string GetAiColorCode(string excludeCode)
         {
             return _instance.GetRandomCode(excludeCode);
+        }
+
+        public static string GetColorCodeAtIndex(int index)
+        {
+            return _instance.palettes[index].GetPaletteColor();
         }
 
 
@@ -51,6 +58,5 @@ namespace Palettes
             else
                 return code;
         }
-
     }
 }

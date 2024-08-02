@@ -1,5 +1,6 @@
 using GamePlay;
 using Model;
+using Palettes;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -47,7 +48,14 @@ namespace Board
             baordValidator = new BaordValidator(_cells, rows);
             baordValidator.OnBoardValidate += OnBoardValidate;
             _currentPlayer = BoardPlayers.PLAYER_X;
+            NetworkManager.Instance.UserCellColorIndex = PaletteView.UserCellColorIndex;
             StartCoroutine(StartRound());
+        }
+
+        public void UpdateNetworkData(Vector2 cellIndexs, int colorIndex)
+        {
+            SelectedCode = PaletteView.GetColorCodeAtIndex(colorIndex);
+            OnCellSelected((int)cellIndexs.x, (int)cellIndexs.y);
         }
 
         private IEnumerator StartRound()
@@ -64,7 +72,7 @@ namespace Board
         private void OnCellSelected(int rowIndex, int index)
         {
             _cells[rowIndex][index] = _currentPlayer == BoardPlayers.PLAYER_X ? 1 : 0;
-
+            NetworkManager.Instance.CellIndexs = new Vector2(rowIndex, index);
             Cell selectedCell = rows[rowIndex].Cells[index];
             selectedCell.UpdateLabel(_cells[rowIndex][index]);
             _cellIndexes.Remove(selectedCell.Id);
@@ -82,8 +90,8 @@ namespace Board
             if (type == BoardValidType.WIN)
             {
                 LoggerUtil.Log("WIN : " + _currentPlayer);
-                EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN, 
-                        Winner = _currentPlayer == BoardPlayers.PLAYER_X ? Winner.USER : Winner.AI });
+                EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN,
+                    Winner = _currentPlayer == BoardPlayers.PLAYER_X ? Winner.USER : Winner.AI });
             }
             else
             {
@@ -116,7 +124,7 @@ namespace Board
             Cell aiCell = null;
             int index = -1;
             int rowIndex = 0;
-            for (int i = 0; i<rows.Count;i++)
+            for (int i = 0; i < rows.Count; i++)
             {
                 aiCell = rows[i].Cells.Find(item => item.Id == cellId);
                 if (aiCell != null)

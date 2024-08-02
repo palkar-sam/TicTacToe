@@ -3,14 +3,14 @@ using Photon.Pun;
 using Views;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Utils;
 using Model;
+using Board;
 
 public class GamePlayController : BaseView
 {
     [SerializeField] private TextMeshProUGUI roomNameText;
     [SerializeField] private SummaryView summaryView;
+    [SerializeField] private CardBoard cardBoard;
 
     public override void OnInitialize()
     {
@@ -32,13 +32,18 @@ public class GamePlayController : BaseView
     {
         base.OnBackClick();
         DeRegoisterEvents();
-        NetworkManager.Instance.LeaveRoom();
+
+        if (GameManager.Instance.IsMultiplayer)
+            NetworkManager.Instance.LeaveRoom();
+        else
+            SceneManager.LoadSceneAsync(1);
     }
 
     private void RegoisterEvents()
     {
         EventManager<BoardModel>.StartListening(Props.GameEvents.ON_ROUND_COMPLETE, OnRoundComplete);
         summaryView.OnHide += () => { OnBackClick(); };
+        NetworkManager.Instance.OnDataRecived += OnNetworkDataRecived;
     }
 
     private void DeRegoisterEvents()
@@ -51,5 +56,10 @@ public class GamePlayController : BaseView
     {
         summaryView.SetData(new Gameplay.Rewards.RewardsData() { Coins = 10, Winner = model.Winner, Type = model.Type });
         summaryView.SetVisibility(true);
+    }
+
+    private void OnNetworkDataRecived(Vector2 cellIndexs, int colorIndex)
+    {
+        cardBoard.UpdateNetworkData(cellIndexs, colorIndex);
     }
 }

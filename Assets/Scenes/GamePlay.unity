@@ -500,6 +500,7 @@ MonoBehaviour:
   backButton: {fileID: 1814141915}
   roomNameText: {fileID: 535387667}
   summaryView: {fileID: 1093106853}
+  cardBoard: {fileID: 1981195804}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

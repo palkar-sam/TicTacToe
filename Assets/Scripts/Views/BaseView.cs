@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,8 +46,9 @@ namespace Views
             OnShow();
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
+            yield return null;
             OnInitialize();
         }
     }
