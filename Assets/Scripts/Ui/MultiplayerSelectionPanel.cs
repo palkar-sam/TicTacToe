@@ -1,3 +1,4 @@
+using Palettes;
 using Props;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace MainMenu
         [SerializeField] private TextMeshProUGUI inputText;
         [SerializeField] private Button createButton;
         [SerializeField] private Button joinButton;
+        [SerializeField] private PaletteView paletteView;
 
         public override void OnInitialize()
         {
@@ -19,10 +21,12 @@ namespace MainMenu
 
             createButton.onClick.AddListener(() => {
                 SetVisibility(false);
+                GameManager.Instance.AiColorCode = GameManager.Instance.UserColorCode = paletteView.SelectedColor;
                 TriggerGameEvent(Props.GameEvents.ON_SHOW_MP_CREATEROOM); 
             });
             joinButton.onClick.AddListener(() => { 
-                SetVisibility(false); 
+                SetVisibility(false);
+                GameManager.Instance.AiColorCode = GameManager.Instance.UserColorCode = paletteView.SelectedColor;
                 TriggerGameEvent(Props.GameEvents.ON_SHOW_MP_JOINROOM); 
             });
         }

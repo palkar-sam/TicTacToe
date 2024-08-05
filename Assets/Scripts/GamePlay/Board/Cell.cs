@@ -19,7 +19,6 @@ namespace Board
 
         private int _index;
         private int _rowId;
-        private string _selectedColorCode;
 
         public void OnPointerClick(PointerEventData eventData)
         {
@@ -34,11 +33,10 @@ namespace Board
             }
         }
 
-        public override void SetData(int id, int rowIndex, int index, Sprite image, string colorCode)
+        public override void SetData(int id, int rowIndex, int index, Sprite image)
         {
             _rowId = rowIndex;
             _index = index;
-            _selectedColorCode = "#" + colorCode;
             itemImg.sprite = image;
             Id = id;
             label.text = $"({_rowId},{_index})";
@@ -46,10 +44,10 @@ namespace Board
             FindNeighbors(index);
         }
 
-        public void UpdateCell(int selectedVal)
+        public void UpdateCell(int selectedVal, string colorCode)
         {
             label.text = $"({_rowId},{_index},{selectedVal})";
-            ColorUtility.TryParseHtmlString(_selectedColorCode, out Color parsedColor);
+            ColorUtility.TryParseHtmlString("#"+ colorCode, out Color parsedColor);
             imageObj.color = parsedColor;
             itemImg.gameObject.SetActive(true);
             IsSelected = true;

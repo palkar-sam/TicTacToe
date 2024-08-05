@@ -65,7 +65,7 @@ namespace Board
                 for (int j = 0; j < rows[i].TotalCells; j++)
                 {
                     rows[i].Cells[j].OnCellSelected += OnCellSelected;
-                    rows[i].Cells[j].SetData(index, i, j, selectedSymbol, "FF0000");
+                    rows[i].Cells[j].SetData(index, i, j, selectedSymbol);
                     tempList.Add(-1);
                     _cellIndexes.Add(index++);
 
@@ -137,7 +137,7 @@ namespace Board
         {
             _cells[rowIndex][index] = _turn == _myTurn ? (int)MarkType.X : (int)MarkType.O;
             Cell selectedCell = rows[rowIndex].Cells[index];
-            selectedCell.UpdateCell(_cells[rowIndex][index]);
+            selectedCell.UpdateCell(_cells[rowIndex][index], SelectedCode);
             _cellIndexes.Remove(selectedCell.Id);
             _selectedCells = new Vector2(rowIndex, index);
 
