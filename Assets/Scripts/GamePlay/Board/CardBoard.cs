@@ -97,7 +97,7 @@ namespace Board
             if (GameManager.Instance.IsMultiplayer)
             {
                 LoggerUtil.Log("CardBoard : OnCellSelected : Turn : " + _turn);
-                if(_myTurn != _turn)
+                if(_myTurn == _turn)
                 {
                     if (photonView != null)
                     {
@@ -132,7 +132,7 @@ namespace Board
 
         private void CellPlayed(int rowIndex, int index, int itemImageIndex = -1)
         {
-            _cells[rowIndex][index] = _turn == _myTurn ? (int)MarkType.X : (int)MarkType.O;
+            _cells[rowIndex][index] = (int)_turn;
             Cell selectedCell = rows[rowIndex].Cells[index];
             if (itemImageIndex > -1)
                 selectedCell.UpdateImage(playersSymbols[itemImageIndex]);
@@ -155,7 +155,7 @@ namespace Board
             {
                 LoggerUtil.Log("Changing Player ---- ");
 
-                if ( _turn == _myTurn)
+                if ( _turn == MarkType.X)
                 {
                     _turn = MarkType.O;
                     SelectedCode = GameManager.Instance.AiColorCode;
