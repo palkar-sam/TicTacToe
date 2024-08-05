@@ -222,7 +222,7 @@ namespace Board
                     if(previousVal.x != _selectedCells.x || previousVal.y != _selectedCells.y)
                     {
                         previousVal = _selectedCells;
-                        LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : " + _selectedCells);
+                        LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : Cells : " + _selectedCells+" : Turn : "+_turn+" : ColorCodeIndex : "+ GameManager.Instance.MultiPlayerUserColorIndex+" : Image Index : 0");
                         if (_selectedCells.x > -1 || _selectedCells.y > -1)
                         {
                             stream.SendNext(_selectedCells);
@@ -238,8 +238,10 @@ namespace Board
                     _turn = (MarkType)stream.ReceiveNext();
                     int colorIndex = (int)stream.ReceiveNext();
                     SelectedCode = PaletteView.GetColorCodeAtIndex(colorIndex);
+                    int imageIndex = (int)stream.ReceiveNext();
                     LoggerUtil.Log("CardBoard : OnPhotonSerializeView : recieving : " + cells + " : Color ind : " + colorIndex);
-                    ProcessCell((int)cells.x, (int)cells.y, (int)stream.ReceiveNext());
+                    LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : Cells : " + cells + " : Turn : " + _turn + " : ColorCodeIndex : " + colorIndex + " : Image Index : "+imageIndex);
+                    ProcessCell((int)cells.x, (int)cells.y, imageIndex);
                 }
             }
         }
