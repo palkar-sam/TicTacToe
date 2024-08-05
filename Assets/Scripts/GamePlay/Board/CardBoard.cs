@@ -76,12 +76,15 @@ namespace Board
 
             baordValidator = new BaordValidator(_cells, rows);
             baordValidator.OnBoardValidate += OnBoardValidate;
-            
+
             StartCoroutine(StartRound());
         }
 
         private IEnumerator StartRound()
         {
+            if(GameManager.Instance.IsMultiplayer)
+                NetworkManager.Instance.RaiseEvent(NetworkEvents.START_ROUND_EVENT, new int[] { (int)_turn });
+
             yield return new WaitForSeconds(1.0f);
             UpdateRoundText();
         }
@@ -109,8 +112,7 @@ namespace Board
                         }
                         else
                         {
-                            NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new int[]{ rowIndex, index, (int)_myTurn, GameManager.Instance.MultiPlayerUserColorIndex, 1 },
-                                Photon.Realtime.RaiseEventOptions.Default, ExitGames.Client.Photon.SendOptions.SendReliable);
+                            NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new int[]{ rowIndex, index, (int)_myTurn, GameManager.Instance.MultiPlayerUserColorIndex, 1 });
                         }
                     }
                     else
@@ -241,18 +243,36 @@ namespace Board
 
         public void OnEvent(EventData photonEvent)
         {
-            if(photonView.IsMine)
+            NetworkEvents code = (NetworkEvents)photonEvent.Code;
+            LoggerUtil.Log("CardBoard : OnEvent : Photon Mine : " + photonView.IsMine + " Event Code : " + code);
+            int[] data = null;
+            if (photonView.IsMine)
             {
-                NetworkEvents code = (NetworkEvents)photonEvent.Code;
                 switch (code)
                 {
                     case NetworkEvents.MOVE_EVENT:
-                        int[] data = (int[])photonEvent.CustomData;
+                        data = (int[])photonEvent.CustomData;
                         LoggerUtil.Log("CardBoard : OnEvent : " + string.Join(",", data));
                         _turn = (MarkType)data[2];
                         SelectedCode = PaletteView.GetColorCodeAtIndex((int)data[3]);
 
                         ProcessCell((int)data[0], (int)data[1], (int)data[4]);
+                        break;
+
+                    default:
+                        LoggerUtil.Log("CardBoard : OnEvent : No Case Found");
+                        break;
+                }
+            }
+            else
+            {
+                switch(code)
+                {
+                    case NetworkEvents.START_ROUND_EVENT:
+                        LoggerUtil.Log("CardBoard : OnEvent : Data : " + string.Join(",", data));
+                        data = (int[])photonEvent.CustomData;
+                        _turn = (MarkType)data[0];
+                        UpdateRoundText();
                         break;
 
                     default:

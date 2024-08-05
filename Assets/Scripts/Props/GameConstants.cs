@@ -27,6 +27,7 @@ namespace Props
 
     public enum NetworkEvents
     {
-        MOVE_EVENT
+        MOVE_EVENT,
+        START_ROUND_EVENT
     }
 }

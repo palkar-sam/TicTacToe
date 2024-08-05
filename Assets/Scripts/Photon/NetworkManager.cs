@@ -197,9 +197,21 @@ public class NetworkManager : PhotonBaseView
         PhotonNetwork.LeaveRoom();
     }
 
+    public void RaiseEvent(NetworkEvents eventType, int[] values, RaiseEventOptions defaultEventOps = null)
+    {
+        if (defaultEventOps == null)
+            defaultEventOps = RaiseEventOptions.Default;
+
+        LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : "+eventType);
+        PhotonNetwork.RaiseEvent((byte)eventType, values, defaultEventOps, SendOptions.SendReliable);
+    }
+
     public void RaiseEvent(NetworkEvents eventType, int[] values, RaiseEventOptions defaultEventOps, SendOptions options)
     {
-        LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : "+eventType);
+        if (defaultEventOps == null)
+            defaultEventOps = RaiseEventOptions.Default;
+        
+        LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : " + eventType);
         PhotonNetwork.RaiseEvent((byte)eventType, values, defaultEventOps, options);
     }
 
