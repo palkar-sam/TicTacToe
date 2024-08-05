@@ -22,6 +22,7 @@ namespace Board
         [SerializeField] private int rowLength;
         [SerializeField] private int colLength;
         [SerializeField] private List<Row> rows;
+        [SerializeField] private List<Sprite> playersSymbols;
 
         //private bool IsBoardComplete => _cells.FindAll(item => item > -1).Count > 0;
 
@@ -38,6 +39,23 @@ namespace Board
         {
             base.OnInitialize();
 
+            Sprite selectedSymbol = null;
+
+            if (GameManager.Instance.IsMultiplayer)
+            {
+                if (photonView != null && photonView.IsMine)
+                {
+                    _myTurn = MarkType.X;
+                    _turn = Random.Range(0, 2) == 0 ? MarkType.O : MarkType.X;
+                    selectedSymbol = playersSymbols[0];
+                }
+                else
+                {
+                    _myTurn = MarkType.O;
+                    selectedSymbol = playersSymbols[1];
+                }
+            }
+
             _cells = new List<List<int>>();
             _cellIndexes = new List<int>();
             int index = 0;
@@ -47,7 +65,7 @@ namespace Board
                 for (int j = 0; j < rows[i].TotalCells; j++)
                 {
                     rows[i].Cells[j].OnCellSelected += OnCellSelected;
-                    rows[i].Cells[j].SetData(index, i, j);
+                    rows[i].Cells[j].SetData(index, i, j, selectedSymbol, "FF0000");
                     tempList.Add(-1);
                     _cellIndexes.Add(index++);
 
@@ -62,18 +80,7 @@ namespace Board
             
             StartCoroutine(StartRound());
 
-            if(GameManager.Instance.IsMultiplayer)
-            {
-                if(photonView != null && photonView.IsMine)
-                {
-                    _myTurn = MarkType.X;
-                    _turn = Random.Range(0, 2) == 0 ? MarkType.O : MarkType.X;
-                }
-                else
-                {
-                    _myTurn = MarkType.O;
-                }
-            }
+            
 
         }
 
@@ -130,7 +137,7 @@ namespace Board
         {
             _cells[rowIndex][index] = _turn == _myTurn ? (int)MarkType.X : (int)MarkType.O;
             Cell selectedCell = rows[rowIndex].Cells[index];
-            selectedCell.UpdateCell(_cells[rowIndex][index], SelectedCode);
+            selectedCell.UpdateCell(_cells[rowIndex][index]);
             _cellIndexes.Remove(selectedCell.Id);
             _selectedCells = new Vector2(rowIndex, index);
 
@@ -217,7 +224,7 @@ namespace Board
             {
                 if (stream.IsWriting)
                 {
-                    if(previousVal.x != _selectedCells.x && previousVal.y != _selectedCells.y)
+                    if(previousVal.x != _selectedCells.x || previousVal.y != _selectedCells.y)
                     {
                         previousVal = _selectedCells;
                         LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : " + _selectedCells);

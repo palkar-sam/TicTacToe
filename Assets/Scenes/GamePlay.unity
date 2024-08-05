@@ -1656,6 +1656,9 @@ MonoBehaviour:
   - {fileID: 2000708037}
   - {fileID: 637542507}
   - {fileID: 311756180}
+  playersSymbols:
+  - {fileID: 21300000, guid: 4c3138ab62d49624ea53b0985ffc26d7, type: 3}
+  - {fileID: 21300000, guid: 9d12bbf8cbc15a944ae9ba8dff906447, type: 3}
 --- !u!114 &1981195805
 MonoBehaviour:
   m_ObjectHideFlags: 0

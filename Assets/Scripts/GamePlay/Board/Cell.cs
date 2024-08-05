@@ -12,12 +12,14 @@ namespace Board
     public class Cell : BaseCell, IPointerClickHandler
     {
         [SerializeField] private Image imageObj;
+        [SerializeField] private Image itemImg;
 
         public int Index => _index;
         public int RowIndex => _rowId;
 
         private int _index;
         private int _rowId;
+        private string _selectedColorCode;
 
         public void OnPointerClick(PointerEventData eventData)
         {
@@ -32,20 +34,24 @@ namespace Board
             }
         }
 
-        public override void SetData(int id, int rowIndex, int index)
+        public override void SetData(int id, int rowIndex, int index, Sprite image, string colorCode)
         {
             _rowId = rowIndex;
             _index = index;
+            _selectedColorCode = "#" + colorCode;
+            itemImg.sprite = image;
             Id = id;
             label.text = $"({_rowId},{_index})";
+            itemImg.gameObject.SetActive(false);
             FindNeighbors(index);
         }
 
-        public void UpdateCell(int selectedVal, string colorCode)
+        public void UpdateCell(int selectedVal)
         {
             label.text = $"({_rowId},{_index},{selectedVal})";
-            ColorUtility.TryParseHtmlString("#" + colorCode, out Color parsedColor);
+            ColorUtility.TryParseHtmlString(_selectedColorCode, out Color parsedColor);
             imageObj.color = parsedColor;
+            itemImg.gameObject.SetActive(true);
             IsSelected = true;
         }
     }
