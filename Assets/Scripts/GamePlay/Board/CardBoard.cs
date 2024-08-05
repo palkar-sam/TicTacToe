@@ -114,6 +114,7 @@ namespace Board
                         else
                         {
                             NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new int[]{ rowIndex, index, (int)_myTurn, GameManager.Instance.MultiPlayerUserColorIndex, 1 });
+                            CellPlayed(rowIndex, index);
                         }
                     }
                     else
@@ -135,6 +136,7 @@ namespace Board
 
         private void CellPlayed(int rowIndex, int index, int itemImageIndex = -1)
         {
+            LoggerUtil.Log("CardBoard : CellPlayed : Turn : "+_turn);
             _cells[rowIndex][index] = (int)_turn;
             Cell selectedCell = rows[rowIndex].Cells[index];
             if (itemImageIndex > -1)
