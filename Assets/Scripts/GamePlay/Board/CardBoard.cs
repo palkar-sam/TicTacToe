@@ -82,10 +82,11 @@ namespace Board
 
         private IEnumerator StartRound()
         {
-            if(GameManager.Instance.IsMultiplayer)
+            yield return new WaitForSeconds(1.0f);
+
+            if (GameManager.Instance.IsMultiplayer && photonView.IsMine)
                 NetworkManager.Instance.RaiseEvent(NetworkEvents.START_ROUND_EVENT, new int[] { (int)_turn });
 
-            yield return new WaitForSeconds(1.0f);
             UpdateRoundText();
         }
 
@@ -244,7 +245,7 @@ namespace Board
         public void OnEvent(EventData photonEvent)
         {
             NetworkEvents code = (NetworkEvents)photonEvent.Code;
-            LoggerUtil.Log("CardBoard : OnEvent : Photon Mine : " + photonView.IsMine + " Event Code : " + code);
+            LoggerUtil.Log("CardBoard : OnEvent : Photon Mine : " + photonView.IsMine + " : Event Code : " + code);
             int[] data = null;
             if (photonView.IsMine)
             {
@@ -269,8 +270,8 @@ namespace Board
                 switch(code)
                 {
                     case NetworkEvents.START_ROUND_EVENT:
-                        LoggerUtil.Log("CardBoard : OnEvent : Data : " + string.Join(",", data));
                         data = (int[])photonEvent.CustomData;
+                        LoggerUtil.Log("CardBoard : OnEvent : Data : " + string.Join(",", data));
                         _turn = (MarkType)data[0];
                         UpdateRoundText();
                         break;
