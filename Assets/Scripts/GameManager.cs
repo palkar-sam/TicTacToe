@@ -14,9 +14,15 @@ public class GameManager : MonoBehaviour
     public bool IsSinglePlayer { get; set; }
 
     public string UserName { get; set; } = "Dummy";
-    public string UserColorCode;
-    public string AiColorCode;
-    public int MultiPlayerUserColorIndex;
+    public string UserColorCode { get; set; }
+    public string AiColorCode { get; set; }
+    public int MultiPlayerUserColorIndex { get; set; }
+
+    public void ResetOnLobby()
+    {
+        AiColorCode = UserColorCode = string.Empty;
+        MultiPlayerUserColorIndex = -1;
+    }
 
     private void Awake()
     {
