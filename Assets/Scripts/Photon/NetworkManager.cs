@@ -28,6 +28,7 @@ public class NetworkManager : PhotonBaseView
     public string RoomName => PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.Name : string.Empty;
 
     public string ActiveUserName { get; set; }
+    public string ActiveOpponentName { get; private set; }
 
     private string _gameVersion = "v1";
     private bool _isMasterJoiningRoom;
@@ -97,6 +98,7 @@ public class NetworkManager : PhotonBaseView
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         base.OnPlayerEnteredRoom(newPlayer);
+        ActiveOpponentName = newPlayer.NickName;
         LoggerUtil.Log("NetworkManager : OnPlayerEnteredRoom : " + newPlayer.NickName+" : Total Player Count : "+ PhotonNetwork.CurrentRoom.PlayerCount);
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && PhotonNetwork.IsMasterClient)
         {
