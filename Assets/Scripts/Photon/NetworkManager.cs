@@ -197,10 +197,10 @@ public class NetworkManager : PhotonBaseView
         PhotonNetwork.LeaveRoom();
     }
 
-    public void RaiseEvent(NetworkEvents eventType, Vector2 cells, RaiseEventOptions defaultEventOps, SendOptions options)
+    public void RaiseEvent(NetworkEvents eventType, int[] values, RaiseEventOptions defaultEventOps, SendOptions options)
     {
         LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : "+eventType);
-        PhotonNetwork.RaiseEvent((byte)eventType, cells, defaultEventOps, options);
+        PhotonNetwork.RaiseEvent((byte)eventType, values, defaultEventOps, options);
     }
 
     private void CreateRandomRoom(string roomName)

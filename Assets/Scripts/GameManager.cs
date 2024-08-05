@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public string UserName { get; set; } = "Dummy";
     public string UserColorCode;
     public string AiColorCode;
+    public int MultiPlayerUserColorIndex;
 
     private void Awake()
     {

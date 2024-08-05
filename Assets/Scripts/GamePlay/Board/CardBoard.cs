@@ -28,7 +28,6 @@ namespace Board
 
         private List<List<int>> _cells; // This stores status of board. 0 - Ai, 1 - user, -1 - Not selected
         private List<int> _cellIndexes; // This stores all cells indexs - 0,1,2,3,4,5,6,7,8,9
-        private List<Cell> _userDaubedCells = new List<Cell>();
         private BaordValidator baordValidator;
         private Vector2 _selectedCells = new Vector2(-1,-1);
 
@@ -40,6 +39,8 @@ namespace Board
             base.OnInitialize();
 
             Sprite selectedSymbol = null;
+            _myTurn = MarkType.X;
+            _turn = MarkType.X;
 
             if (GameManager.Instance.IsMultiplayer)
             {
@@ -75,13 +76,8 @@ namespace Board
 
             baordValidator = new BaordValidator(_cells, rows);
             baordValidator.OnBoardValidate += OnBoardValidate;
-            _myTurn = MarkType.X;
-            _turn = MarkType.X;
             
             StartCoroutine(StartRound());
-
-            
-
         }
 
         private IEnumerator StartRound()
@@ -108,11 +104,12 @@ namespace Board
                         LoggerUtil.Log("CardBoard : OnCellSelected : PhotonView.isMine : " + photonView.IsMine);
                         if (photonView.IsMine)
                         {
+                            SelectedCode = GameManager.Instance.UserColorCode;
                             CellPlayed(rowIndex, index);
                         }
                         else
                         {
-                            NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new Vector2(rowIndex, index),
+                            NetworkManager.Instance.RaiseEvent(NetworkEvents.MOVE_EVENT, new int[]{ rowIndex, index, (int)_myTurn, GameManager.Instance.MultiPlayerUserColorIndex, 1 },
                                 Photon.Realtime.RaiseEventOptions.Default, ExitGames.Client.Photon.SendOptions.SendReliable);
                         }
                     }
@@ -133,18 +130,15 @@ namespace Board
             }
         }
 
-        private void CellPlayed(int rowIndex, int index)
+        private void CellPlayed(int rowIndex, int index, int itemImageIndex = -1)
         {
             _cells[rowIndex][index] = _turn == _myTurn ? (int)MarkType.X : (int)MarkType.O;
             Cell selectedCell = rows[rowIndex].Cells[index];
+            if (itemImageIndex > -1)
+                selectedCell.UpdateImage(playersSymbols[itemImageIndex]);
             selectedCell.UpdateCell(_cells[rowIndex][index], SelectedCode);
             _cellIndexes.Remove(selectedCell.Id);
             _selectedCells = new Vector2(rowIndex, index);
-
-            if (_myTurn == MarkType.X)
-            {
-                _userDaubedCells.Add(rows[rowIndex].Cells[index]);
-            }
 
             baordValidator.ValidateBoard(rowIndex, index);
         }
@@ -207,12 +201,8 @@ namespace Board
 
         private int GetAiMove()
         {
-            //if(_userDaubedCells.Count == 1)
-            {
-                LoggerUtil.Log($"Ai : _cellIndexes.Count : ({_cellIndexes.Count})");
-                return _cellIndexes[Random.Range(0, _cellIndexes.Count - 1)];
-            }
-            //return 0;
+            LoggerUtil.Log($"Ai : _cellIndexes.Count : ({_cellIndexes.Count})");
+            return _cellIndexes[Random.Range(0, _cellIndexes.Count - 1)];
         }
 
         #region IPunObservable interface Functions, Photon event handling and synchronisaton.
@@ -231,7 +221,8 @@ namespace Board
                         if (_selectedCells.x > -1 || _selectedCells.y > -1)
                         {
                             stream.SendNext(_selectedCells);
-                            stream.SendNext(_turn);
+                            stream.SendNext(_myTurn);
+                            stream.SendNext(GameManager.Instance.MultiPlayerUserColorIndex);
                             stream.SendNext(0);
                         }
                     }
@@ -243,7 +234,7 @@ namespace Board
                     int colorIndex = (int)stream.ReceiveNext();
                     SelectedCode = PaletteView.GetColorCodeAtIndex(colorIndex);
                     LoggerUtil.Log("CardBoard : OnPhotonSerializeView : recieving : " + cells + " : Color ind : " + colorIndex);
-                    ProcessCell((int)cells.x, (int)cells.y);
+                    ProcessCell((int)cells.x, (int)cells.y, (int)stream.ReceiveNext());
                 }
             }
         }
@@ -256,9 +247,12 @@ namespace Board
                 switch (code)
                 {
                     case NetworkEvents.MOVE_EVENT:
-                        Vector2 cells = (Vector2)photonEvent.CustomData;
-                        LoggerUtil.Log("CardBoard : OnEvent : " + cells);
-                        ProcessCell((int)cells.x, (int)cells.y);
+                        int[] data = (int[])photonEvent.CustomData;
+                        LoggerUtil.Log("CardBoard : OnEvent : " + string.Join(",", data));
+                        _turn = (MarkType)data[2];
+                        SelectedCode = PaletteView.GetColorCodeAtIndex((int)data[3]);
+
+                        ProcessCell((int)data[0], (int)data[1], (int)data[4]);
                         break;
 
                     default:
@@ -268,11 +262,11 @@ namespace Board
             }
         }
 
-        private void ProcessCell(int rowIndex, int cellIndex)
+        private void ProcessCell(int rowIndex, int cellIndex, int itemImageIndex)
         {
             if (!rows[rowIndex].Cells[cellIndex].IsSelected)
             {
-                CellPlayed(rowIndex, cellIndex);
+                CellPlayed(rowIndex, cellIndex, itemImageIndex);
             }
             else
             {

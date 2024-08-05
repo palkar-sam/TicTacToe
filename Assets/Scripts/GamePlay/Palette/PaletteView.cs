@@ -14,6 +14,7 @@ namespace Palettes
         public static int UserCellColorIndex = 1;
 
         public string SelectedColor { get; private set; } = "FF0000";
+        public int SelectedColorIndex { get; private set; } = 0;
 
         public static string GetAiColorCode(string excludeCode)
         {
@@ -44,8 +45,10 @@ namespace Palettes
 
             for (int i = 0; i < palettes.Count; i++)
             {
-                if(currentPalette != palettes[i])
-                    palettes[i].Reset();   
+                if (currentPalette != palettes[i])
+                    palettes[i].Reset();
+                else
+                    SelectedColorIndex = i;
             }
         }
 

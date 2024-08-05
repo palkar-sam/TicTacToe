@@ -22,6 +22,7 @@ namespace MainMenu
             createButton.onClick.AddListener(() => {
                 SetVisibility(false);
                 GameManager.Instance.AiColorCode = GameManager.Instance.UserColorCode = paletteView.SelectedColor;
+                GameManager.Instance.MultiPlayerUserColorIndex = paletteView.SelectedColorIndex;
                 TriggerGameEvent(Props.GameEvents.ON_SHOW_MP_CREATEROOM); 
             });
             joinButton.onClick.AddListener(() => { 

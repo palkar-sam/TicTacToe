@@ -52,6 +52,8 @@ namespace Board
             itemImg.gameObject.SetActive(true);
             IsSelected = true;
         }
+
+        public void UpdateImage(Sprite image) => itemImg.sprite = image;
     }
 }
 
