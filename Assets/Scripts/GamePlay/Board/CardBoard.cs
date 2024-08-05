@@ -209,18 +209,24 @@ namespace Board
         }
 
         #region IPunObservable interface Functions, Photon event handling and synchronisaton.
+
+        private Vector2 previousVal = Vector2.zero;
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if(GameManager.Instance.IsMultiplayer)
             {
                 if (stream.IsWriting)
                 {
-                    LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : " + _selectedCells);
-                    if (_selectedCells.x > -1 || _selectedCells.y > -1)
+                    if(previousVal.x != _selectedCells.x && previousVal.y != _selectedCells.y)
                     {
-                        stream.SendNext(_selectedCells);
-                        stream.SendNext(_turn);
-                        stream.SendNext(0);
+                        previousVal = _selectedCells;
+                        LoggerUtil.Log("CardBoard : OnPhotonSerializeView : sending : " + _selectedCells);
+                        if (_selectedCells.x > -1 || _selectedCells.y > -1)
+                        {
+                            stream.SendNext(_selectedCells);
+                            stream.SendNext(_turn);
+                            stream.SendNext(0);
+                        }
                     }
                 }
                 else
@@ -257,8 +263,14 @@ namespace Board
 
         private void ProcessCell(int rowIndex, int cellIndex)
         {
-            CellPlayed(rowIndex, cellIndex);
-            rows[rowIndex].Cells[cellIndex].UpdateCell(_cells[rowIndex][cellIndex], SelectedCode);
+            if (!rows[rowIndex].Cells[cellIndex].IsSelected)
+            {
+                CellPlayed(rowIndex, cellIndex);
+            }
+            else
+            {
+                LoggerUtil.Log("CardBoard : ProcessCell : Cell is already selected.");
+            }
         }
         #endregion
     }
