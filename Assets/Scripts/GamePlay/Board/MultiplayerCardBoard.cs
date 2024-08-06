@@ -84,6 +84,7 @@ namespace Board
         {
             yield return new WaitForSeconds(1.0f);
 
+            LoggerUtil.Log("MultiplayerCardBoard : StartRound : MP Mode : " + GameManager.Instance.IsMultiplayer+" Photon View : "+ photonView.IsMine);
             if (GameManager.Instance.IsMultiplayer && photonView.IsMine)
                 NetworkManager.Instance.RaiseEvent(NetworkEvents.START_ROUND_EVENT, new int[] { (int)_turn });
 
