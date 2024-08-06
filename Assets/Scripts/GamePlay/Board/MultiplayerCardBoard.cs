@@ -80,6 +80,15 @@ namespace Board
             StartCoroutine(StartRound());
         }
 
+        public override void OnShow()
+        {
+            base.OnShow();
+            Transform t = GetComponent<Transform>();
+            t.position = new Vector3(0, 0, 0);
+            t.localScale = Vector3.one;
+            t.SetParent(GameObject.Find("BoardCont").transform, false);
+        }
+
         private IEnumerator StartRound()
         {
             yield return new WaitForSeconds(1.0f);
