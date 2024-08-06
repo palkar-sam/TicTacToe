@@ -14,16 +14,14 @@ using Views;
 
 namespace Board
 {
-    public class SinglePlayerCardBoard : CardBoard, IPunObservable, IOnEventCallback
+    public class SinglePlayerCardBoard : CardBoard
     {
         public override void OnInitialize()
         {
-            if (GameManager.Instance.IsSinglePlayer)
-            {
-                _defaultSymbol = playersSymbols[0];
-                _myTurn = MarkType.X;
-                _turn = MarkType.X;
-            }
+           
+            _defaultSymbol = playersSymbols[0];
+            _myTurn = MarkType.X;
+            _turn = MarkType.X;
 
             base.OnInitialize();
         }

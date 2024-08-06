@@ -3511,8 +3511,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 426d9c49455924442b27af512905f2f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UserColorCode: 
-  AiColorCode: 
 --- !u!4 &772324547
 Transform:
   m_ObjectHideFlags: 0

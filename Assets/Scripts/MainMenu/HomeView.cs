@@ -40,10 +40,10 @@ namespace MainMenu
             GameManager.Instance.Is1vs1Enabled = mode == 1;
             GameManager.Instance.IsSinglePlayer = mode == 0;
 
-            if (string.IsNullOrEmpty(CardBoard.SelectedCode))
-            {
+            if (!string.IsNullOrEmpty(CardBoard.SelectedCode))
                 GameManager.Instance.UserColorCode = CardBoard.SelectedCode = PaletteView.DefaultColor;
-            }
+            else
+                GameManager.Instance.UserColorCode = CardBoard.SelectedCode;
 
             GameManager.Instance.AiColorCode = PaletteView.GetAiColorCode(GameManager.Instance.UserColorCode);
             SceneManager.LoadSceneAsync(2);

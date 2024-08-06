@@ -35,6 +35,8 @@ namespace Board
         protected MarkType _turn;
         protected Sprite _defaultSymbol;
 
+        private int _defaultSymbolInd;
+
         public override void OnInitialize()
         {
             base.OnInitialize();
@@ -73,7 +75,7 @@ namespace Board
         {
             LoggerUtil.Log("CardBoard : OnCellSelected : Turn : " + _turn);
             SelectedCode = _turn == MarkType.X ? GameManager.Instance.UserColorCode : GameManager.Instance.AiColorCode;
-            CellPlayed(rowIndex, index);
+            CellPlayed(rowIndex, index, _defaultSymbolInd);
         }
 
         protected virtual void OnBoardValidate(BoardValidType type)
@@ -88,7 +90,17 @@ namespace Board
             {
                 LoggerUtil.Log("Changing Player ---- ");
 
-                _turn = _turn == MarkType.X ? MarkType.O : MarkType.X;
+                if (_turn == MarkType.X)
+                {
+                    _turn = MarkType.O;
+                    _defaultSymbolInd = 1;
+                }
+                else
+                {
+                    _turn = MarkType.X;
+                    _defaultSymbolInd = 0;
+                }
+                        
 
                 LoggerUtil.Log("Next Player : " + _turn);
                 UpdateRoundText();
