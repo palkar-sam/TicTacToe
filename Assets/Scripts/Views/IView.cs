@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
-
-namespace Views
+﻿namespace Views
 {
     public interface IView
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Utils;
+using Aik.Utils;
 
 namespace Board
 {
@@ -32,7 +32,7 @@ namespace Board
             if (!matchFound)
                 CheckForDigonallyUpRightLeft(rowIndex, index, out matchFound);
 
-            Log("ValidateBoard status : " + _matchCells.Count + " : Match Found : "+ matchFound);
+            Log("ValidateBoard status : " + _matchCells.Count + " : Match Found : " + matchFound);
 
             if (matchFound)
             {
@@ -210,7 +210,7 @@ namespace Board
 
         private void Log(string str)
         {
-            LoggerUtil.Log("Board Validation : "+ str);
+            LoggerUtil.Log("Board Validation : " + str);
         }
     }
 

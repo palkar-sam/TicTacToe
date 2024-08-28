@@ -1,3 +1,7 @@
+using Model;
+using Props;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Views;
 
@@ -5,60 +9,59 @@ namespace MainMenu
 {
     public class MainMenuView : BaseView
     {
-        [SerializeField] private CreateView createView;
-        [SerializeField] private JoinView joinView;
-        [SerializeField] private HomeView homeView;
+        [SerializeField] private List<Screens> screens;
+
+        private Screens _homeScreen;
 
         public override void OnShow()
         {
             base.OnShow();
 
-            createView.SetVisibility(false);
-            joinView.SetVisibility(false);
-            //homeView.SetVisibility(true);
+            _homeScreen = screens[0];
 
-            //createView.OnHide += OnShowHomeView;
-            //joinView.OnHide += OnShowHomeView;
-
-            EventManager.StartListening(Props.GameEvents.ON_SHOW_MP_CREATEROOM, OnShowCreateDialog);
-            EventManager.StartListening(Props.GameEvents.ON_SHOW_MP_JOINROOM, OnShowJoinDialog);
             EventManager.StartListening(Props.GameEvents.ON_DISCONNECTED, OnDisconnected);
+            EventManager<ScreenModel>.StartListening(Props.GameEvents.ON_SHOW_VIEW, OnShowDialog);
+            EventManager<ScreenModel>.StartListening(Props.GameEvents.ON_CLOSE_VIEW, OnCloseDialog);
         }
 
         private void OnDestroy()
         {
-            EventManager.StopListening(Props.GameEvents.ON_SHOW_MP_CREATEROOM, OnShowCreateDialog);
-            EventManager.StopListening(Props.GameEvents.ON_SHOW_MP_JOINROOM, OnShowJoinDialog);
             EventManager.StopListening(Props.GameEvents.ON_DISCONNECTED, OnDisconnected);
+            EventManager<ScreenModel>.StopListening(Props.GameEvents.ON_SHOW_VIEW, OnShowDialog);
+            EventManager<ScreenModel>.StopListening(Props.GameEvents.ON_CLOSE_VIEW, OnCloseDialog);
         }
 
         private void OnDisconnected()
         {
-            OnShowHomeView();
-            homeView.ShowLobby();
+            _homeScreen.View.SetVisibility(true);
+            (_homeScreen.View as HomeView).ShowLobby();
         }
 
-        private void OnShowCreateDialog()
+        private void OnShowDialog(ScreenModel model)
         {
-            createView.SetVisibility(true);
-            homeView.SetVisibility(false);
-            joinView.SetVisibility(false);
+            _homeScreen.View.SetVisibility(false);
+            Screens screen = screens.Find(itemView => itemView.Type == model.Type);
+            screen.View.SetVisibility(true);
         }
 
-        private void OnShowJoinDialog()
+        private void OnCloseDialog(ScreenModel model)
         {
-            joinView.SetVisibility(true);
-            createView.SetVisibility(false);
-            homeView.SetVisibility(false);
+            Screens screen = screens.Find(itemView => itemView.Type == model.Type);
+            if(screen != null)
+            {
+                screen.View.SetVisibility(false);
+                _homeScreen.View.SetVisibility(true);
+            }
         }
+    }
 
-        private void OnShowHomeView()
-        {
-            joinView.SetVisibility(false);
-            createView.SetVisibility(false);
-            homeView.SetVisibility(true);
-        }
-        
+    [Serializable]
+    public class Screens
+    {
+        [SerializeField] private ScreenType type;
+        [SerializeField] private BaseView view;
+
+        public ScreenType Type => type;
+        public BaseView View => view;
     }
 }
-

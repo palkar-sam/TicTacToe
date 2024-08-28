@@ -1,11 +1,7 @@
-using Board;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Utils;
+using Aik.Utils;
 
 namespace Board
 {
@@ -47,7 +43,7 @@ namespace Board
         public void UpdateCell(int selectedVal, string colorCode)
         {
             label.text = $"({_rowId},{_index},{selectedVal})";
-            ColorUtility.TryParseHtmlString("#"+ colorCode, out Color parsedColor);
+            ColorUtility.TryParseHtmlString("#" + colorCode, out Color parsedColor);
             imageObj.color = parsedColor;
             itemImg.gameObject.SetActive(true);
             IsSelected = true;

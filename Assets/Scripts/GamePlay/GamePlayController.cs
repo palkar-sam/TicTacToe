@@ -1,10 +1,8 @@
-using UnityEngine;
-using Photon.Pun;
-using Views;
-using TMPro;
-using UnityEngine.SceneManagement;
 using Model;
-using Board;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Views;
 
 public class GamePlayController : BaseView
 {

@@ -3,13 +3,12 @@ using Model;
 using Photon.Pun;
 using Photon.Realtime;
 using Props;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Utils;
+using Aik.Utils;
 using Views;
 
 public class NetworkManager : PhotonBaseView
@@ -32,7 +31,7 @@ public class NetworkManager : PhotonBaseView
 
     private string _gameVersion = "v1";
     private bool _isMasterJoiningRoom;
-    
+
     public override void OnInitialize()
     {
         base.OnInitialize();
@@ -89,7 +88,7 @@ public class NetworkManager : PhotonBaseView
     {
         base.OnJoinedRoom();
         ShowStatus("Successfully Connected to Room.");
-        if(!PhotonNetwork.IsMasterClient)
+        if (!PhotonNetwork.IsMasterClient)
             StartCoroutine(HideLoader(0.5f));
         else
             ShowStatus("Joined room Waiting for another player to Join.");
@@ -99,7 +98,7 @@ public class NetworkManager : PhotonBaseView
     {
         base.OnPlayerEnteredRoom(newPlayer);
         ActiveOpponentName = newPlayer.NickName;
-        LoggerUtil.Log("NetworkManager : OnPlayerEnteredRoom : " + newPlayer.NickName+" : Total Player Count : "+ PhotonNetwork.CurrentRoom.PlayerCount);
+        LoggerUtil.Log("NetworkManager : OnPlayerEnteredRoom : " + newPlayer.NickName + " : Total Player Count : " + PhotonNetwork.CurrentRoom.PlayerCount);
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && PhotonNetwork.IsMasterClient)
         {
             StartCoroutine(HideLoader(0.2f));
@@ -116,7 +115,7 @@ public class NetworkManager : PhotonBaseView
     public override void OnErrorInfo(ErrorInfo errorInfo)
     {
         base.OnErrorInfo(errorInfo);
-        LoggerUtil.Log("NetworkManager : OnErrorInfo : "+ errorInfo.Info);
+        LoggerUtil.Log("NetworkManager : OnErrorInfo : " + errorInfo.Info);
     }
 
     public override void OnLeftRoom()
@@ -129,12 +128,12 @@ public class NetworkManager : PhotonBaseView
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         base.OnMasterClientSwitched(newMasterClient);
-        LoggerUtil.Log("NetworkManager : OnMasterClientSwitched : New Master : "+ newMasterClient.NickName);
+        LoggerUtil.Log("NetworkManager : OnMasterClientSwitched : New Master : " + newMasterClient.NickName);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        base.OnPlayerLeftRoom(otherPlayer); 
+        base.OnPlayerLeftRoom(otherPlayer);
         LoggerUtil.Log("NetworkManager : OnPlayerLeftRoom : Other Player : " + otherPlayer.NickName);
     }
     #endregion
@@ -174,7 +173,7 @@ public class NetworkManager : PhotonBaseView
     {
         _isMasterJoiningRoom = true;
         LoggerUtil.Log("NetworkManager : JoinRoom : " + roomName);
-        
+
         if (string.IsNullOrEmpty(roomName) || roomName.Length < 2)
         {
             ShowLoader("Room name is empty joining random room - ");
@@ -204,7 +203,7 @@ public class NetworkManager : PhotonBaseView
         if (defaultEventOps == null)
             defaultEventOps = RaiseEventOptions.Default;
 
-        LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : "+eventType);
+        LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : " + eventType);
         PhotonNetwork.RaiseEvent((byte)eventType, values, defaultEventOps, SendOptions.SendReliable);
     }
 
@@ -212,7 +211,7 @@ public class NetworkManager : PhotonBaseView
     {
         if (defaultEventOps == null)
             defaultEventOps = RaiseEventOptions.Default;
-        
+
         LoggerUtil.Log("NetworkManager : RaiseEvent :  EventType : " + eventType);
         PhotonNetwork.RaiseEvent((byte)eventType, values, defaultEventOps, options);
     }

@@ -1,11 +1,9 @@
 using Board;
 using Palettes;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Utils;
+using Aik.Utils;
 using Views;
 
 namespace MainMenu
@@ -23,7 +21,7 @@ namespace MainMenu
             for (int i = 0; i < homeBtns.Count; i++)
             {
                 homeBtns[i].AddListener(ShowModePanel, i);
-                //modeSeletionPanels[i].OnHide += () => { ShowLobby(); };
+                //modeSeletionPanels[i].OnHide += () => { ShowLobby(); };//this is giving some wiered behaviour while hiding the panel.
             }
 
             ShowModePanel(-1);

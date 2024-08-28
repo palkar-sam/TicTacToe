@@ -1,16 +1,6 @@
-using ExitGames.Client.Photon;
-using GamePlay;
-using Model;
-using Palettes;
-using Photon.Pun;
-using Photon.Realtime;
-using Props;
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using Utils;
-using Views;
+using Aik.Utils;
 
 namespace Board
 {
@@ -18,7 +8,7 @@ namespace Board
     {
         public override void OnInitialize()
         {
-           
+
             _defaultSymbol = playersSymbols[0];
             _myTurn = MarkType.X;
             _turn = MarkType.X;
@@ -30,11 +20,11 @@ namespace Board
         {
             base.OnBoardValidate(type);
 
-            LoggerUtil.Log("OnBoardValidate : SinglePlayerCardBoard : Type : " + type+" : Turn : "+_turn);
+            LoggerUtil.Log("OnBoardValidate : SinglePlayerCardBoard : Type : " + type + " : Turn : " + _turn);
 
             if (type != BoardValidType.WIN && GameManager.Instance.IsSinglePlayer)
             {
-                if (_turn == MarkType.O )
+                if (_turn == MarkType.O)
                     StartCoroutine(PlayAiMove());
             }
         }
@@ -58,7 +48,7 @@ namespace Board
                     break;
                 }
             }
-            
+
             LoggerUtil.Log($"Ai : Location : ({rowIndex} , {index}) : AI Turn : {_turn}");
             LoggerUtil.Log($"Remaining cell Positions : ({string.Join(",", _cellIndexes)})");
             OnCellSelected(rowIndex, index);

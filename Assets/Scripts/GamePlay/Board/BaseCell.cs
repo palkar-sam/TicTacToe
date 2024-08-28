@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Board
@@ -29,7 +27,7 @@ namespace Board
         {
             neighbors = new List<List<int>>();
             List<int> tempArr;
-            
+
             tempArr = null;
             tempArr = new List<int>();
             tempArr.Add(index - 3);

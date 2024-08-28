@@ -1,22 +1,16 @@
-using ExitGames.Client.Photon;
-using GamePlay;
 using Model;
-using Palettes;
-using Photon.Pun;
-using Photon.Realtime;
-using Props;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using Utils;
+using Aik.Utils;
 using Views;
 
 namespace Board
 {
     public class CardBoard : BaseView
     {
-        public static string SelectedCode; 
+        public static string SelectedCode;
 
         [SerializeField] protected TextMeshProUGUI playerStatus;
         [SerializeField] private int rowLength;
@@ -29,7 +23,7 @@ namespace Board
         protected List<List<int>> _cells; // This stores status of board. 0 - Ai, 1 - user, -1 - Not selected
         protected List<int> _cellIndexes; // This stores all cells indexs - 0,1,2,3,4,5,6,7,8,9
         protected BaordValidator baordValidator;
-        protected Vector2 _selectedCells = new Vector2(-1,-1);
+        protected Vector2 _selectedCells = new Vector2(-1, -1);
 
         protected MarkType _myTurn;
         protected MarkType _turn;
@@ -83,8 +77,11 @@ namespace Board
             if (type == BoardValidType.WIN)
             {
                 LoggerUtil.Log("WIN : " + _turn);
-                EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel { Type = BoardValidType.WIN,
-                    Winner = _turn == MarkType.X ? Winner.USER : Winner.AI });
+                EventManager<BoardModel>.TriggerEvent(Props.GameEvents.ON_ROUND_COMPLETE, new BoardModel
+                {
+                    Type = BoardValidType.WIN,
+                    Winner = _turn == MarkType.X ? Winner.USER : Winner.AI
+                });
             }
             else
             {
@@ -100,7 +97,7 @@ namespace Board
                     _turn = MarkType.X;
                     _defaultSymbolInd = 0;
                 }
-                        
+
 
                 LoggerUtil.Log("Next Player : " + _turn);
                 UpdateRoundText();

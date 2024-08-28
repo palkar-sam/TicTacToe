@@ -23,7 +23,7 @@ namespace Palettes
 
         public static string GetColorCodeAtIndex(int index)
         {
-            return _instance == null ? "FF0000": _instance.palettes[index].GetPaletteColor();
+            return _instance == null ? "FF0000" : _instance.palettes[index].GetPaletteColor();
         }
 
 
@@ -58,7 +58,7 @@ namespace Palettes
 
             code = palettes[Random.Range(0, palettes.Count - 1)].GetPaletteColor();
 
-            if(code == excludeCode)
+            if (code == excludeCode)
                 return GetRandomCode(excludeCode);
             else
                 return code;

@@ -1,24 +1,29 @@
-﻿using System;
+﻿using Model;
+using Props;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Views
-{ 
+{
     public class BaseView : MonoBehaviour, IView
     {
+        [SerializeField] private ScreenType screenType;
         [SerializeField] private Button backButton;
 
         public event Action OnHide;
+        public bool IsVisible => gameObject.activeInHierarchy;
 
         protected virtual void OnBackClick()
         {
+            EventManager<ScreenModel>.TriggerEvent(GameEvents.ON_CLOSE_VIEW, new ScreenModel { Type = screenType });
             SetVisibility(false);
         }
 
         public virtual void OnInitialize()
         {
-            if(backButton != null)
+            if (backButton != null)
                 backButton.onClick.AddListener(OnBackClick);
         }
 
@@ -46,9 +51,8 @@ namespace Views
             OnShow();
         }
 
-        private IEnumerator Start()
+        private void Start()
         {
-            yield return null;
             OnInitialize();
         }
     }

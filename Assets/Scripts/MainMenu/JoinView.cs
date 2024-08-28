@@ -1,12 +1,7 @@
 using Model;
-using Photon.Pun;
-using Photon.Realtime;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Utils;
 using Views;
 
 public class JoinView : BaseView

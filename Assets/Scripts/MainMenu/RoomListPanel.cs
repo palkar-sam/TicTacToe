@@ -1,9 +1,9 @@
+using Photon.Realtime;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Realtime;
+using Aik.Utils;
 using Views;
-using System;
-using Utils;
 
 public class RoomListPanel : BaseView
 {
@@ -12,13 +12,13 @@ public class RoomListPanel : BaseView
 
     public event Action<string> OnRoomSelected;
 
-    private List<RoomItem> roomItemLists = new List<RoomItem>(); 
+    private List<RoomItem> roomItemLists = new List<RoomItem>();
 
     public void UpdateRoomList(List<RoomInfo> roomList)
     {
-        LoggerUtil.Log("RoomListPanel : Room Lists : " + string.Join(",",roomList));
+        LoggerUtil.Log("RoomListPanel : Room Lists : " + string.Join(",", roomList));
 
-        foreach(RoomItem item in roomItemLists)
+        foreach (RoomItem item in roomItemLists)
         {
             item.OnItemClick -= OnRoomItemClick;
             Destroy(item.gameObject);
@@ -26,7 +26,7 @@ public class RoomListPanel : BaseView
 
         roomItemLists.Clear();
 
-        foreach(RoomInfo room in roomList)
+        foreach (RoomInfo room in roomList)
         {
             RoomItem item = Instantiate(roomItemPrefab, itemContainer);
             item.OnItemClick += OnRoomItemClick;

@@ -20,16 +20,16 @@ namespace Photon.Realtime
     using System.Diagnostics;
     using SupportClass = ExitGames.Client.Photon.SupportClass;
 
-    #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
     using UnityEngine;
-    #endif
+#endif
 
 
-    #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
     public class ConnectionHandler : MonoBehaviour
-    #else
+#else
     public class ConnectionHandler
-    #endif
+#endif
     {
         /// <summary>
         /// Photon client to log information and statistics from.
@@ -79,9 +79,9 @@ namespace Photon.Realtime
         private readonly Stopwatch backgroundStopwatch = new Stopwatch();
 
 
-        #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
 
-        #if UNITY_2019_4_OR_NEWER
+#if UNITY_2019_4_OR_NEWER
 
         /// <summary>
         /// Resets statics for Domain Reload
@@ -96,7 +96,7 @@ namespace Photon.Realtime
             AppOutOfFocusRecent = false;
         }
 
-        #endif
+#endif
 
 
         /// <summary></summary>
@@ -174,7 +174,7 @@ namespace Photon.Realtime
         }
 
 
-        #endif
+#endif
 
 
         /// <summary>
@@ -183,32 +183,32 @@ namespace Photon.Realtime
         /// <returns>Application.internetReachability != NetworkReachability.NotReachable</returns>
         public static bool IsNetworkReachableUnity()
         {
-            #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
             return Application.internetReachability != NetworkReachability.NotReachable;
-            #else
+#else
             return true;
-            #endif
+#endif
         }
 
         public void StartFallbackSendAckThread()
         {
-            #if !UNITY_WEBGL
+#if !UNITY_WEBGL
             if (this.FallbackThreadRunning)
             {
                 return;
             }
 
-            #if UNITY_SWITCH
+#if UNITY_SWITCH
             this.fallbackThreadId = SupportClass.StartBackgroundCalls(this.RealtimeFallbackThread, 50);  // as workaround, we don't name the Thread.
-            #else
+#else
             this.fallbackThreadId = SupportClass.StartBackgroundCalls(this.RealtimeFallbackThread, 50, "RealtimeFallbackThread");
-            #endif
-            #endif
+#endif
+#endif
         }
 
         public void StopFallbackSendAckThread()
         {
-            #if !UNITY_WEBGL
+#if !UNITY_WEBGL
             if (!this.FallbackThreadRunning)
             {
                 return;
@@ -216,7 +216,7 @@ namespace Photon.Realtime
 
             SupportClass.StopBackgroundCalls(this.fallbackThreadId);
             this.fallbackThreadId = 255;
-            #endif
+#endif
         }
 
 

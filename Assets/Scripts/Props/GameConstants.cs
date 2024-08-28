@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-namespace Props
+﻿namespace Props
 {
     public class GameConstants
     {
@@ -15,7 +12,20 @@ namespace Props
         ON_SHOW_MP_CREATEROOM,
         ON_SHOW_MP_JOINROOM,
         ON_DISCONNECTED,
-        ON_ROOM_LIST_UPDATE
+        ON_ROOM_LIST_UPDATE,
+        ON_SHOW_SETTINGS_VIEW,
+        ON_SHOW_VIEW,
+        ON_CLOSE_VIEW
+    }
+
+    public enum ScreenType
+    {
+        None,
+        HomeView,
+        SettingView,
+        RewardView,
+        JoinView,
+        CreateView
     }
 
     public enum ButtonName

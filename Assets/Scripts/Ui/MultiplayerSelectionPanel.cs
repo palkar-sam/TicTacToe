@@ -1,7 +1,6 @@
+using Model;
 using Palettes;
 using Props;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,17 +18,19 @@ namespace MainMenu
         {
             base.OnInitialize();
 
-            createButton.onClick.AddListener(() => {
+            createButton.onClick.AddListener(() =>
+            {
                 SetVisibility(false);
                 GameManager.Instance.AiColorCode = GameManager.Instance.UserColorCode = paletteView.SelectedColor;
                 GameManager.Instance.MultiPlayerUserColorIndex = paletteView.SelectedColorIndex;
-                TriggerGameEvent(Props.GameEvents.ON_SHOW_MP_CREATEROOM); 
+                TriggerGameEvent(Props.GameEvents.ON_SHOW_VIEW, ScreenType.CreateView);
             });
-            joinButton.onClick.AddListener(() => { 
+            joinButton.onClick.AddListener(() =>
+            {
                 SetVisibility(false);
                 GameManager.Instance.AiColorCode = GameManager.Instance.UserColorCode = paletteView.SelectedColor;
                 GameManager.Instance.MultiPlayerUserColorIndex = paletteView.SelectedColorIndex;
-                TriggerGameEvent(Props.GameEvents.ON_SHOW_MP_JOINROOM); 
+                TriggerGameEvent(Props.GameEvents.ON_SHOW_VIEW, ScreenType.JoinView);
             });
         }
 
@@ -45,10 +46,10 @@ namespace MainMenu
             NetworkManager.Instance.DisconnectToServer();
         }
 
-        private void TriggerGameEvent(GameEvents eventName)
+        private void TriggerGameEvent(GameEvents eventName, ScreenType type)
         {
             NetworkManager.Instance.ActiveUserName = string.IsNullOrEmpty(inputText.text) ? "ABC" : inputText.text;
-            EventManager.TriggerEvent(eventName);
+            EventManager<ScreenModel>.TriggerEvent(eventName, new ScreenModel { Type = type });
             NetworkManager.Instance.ConnectToServer();
         }
     }

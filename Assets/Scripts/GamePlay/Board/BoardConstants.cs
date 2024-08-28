@@ -2,6 +2,6 @@
 {
     public class BoardConstants
     {
-        public const string X_PLAYER = "X"; 
+        public const string X_PLAYER = "X";
     }
 }
