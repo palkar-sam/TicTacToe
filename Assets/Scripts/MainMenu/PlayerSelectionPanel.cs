@@ -7,12 +7,5 @@ namespace MainMenu
     {
         [SerializeField] private GameSelectionMode selectionMode;
     }
-
-    public enum GameSelectionMode
-    {
-        SINGLEPLAYER,
-        MULTIPLAYER,
-        TWOPLAYER
-    }
 }
 
